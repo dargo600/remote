@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Remote Control</string>
+    <string name="tv_power">Power</string>
+    <string name="volume_up">Volume +</string>
+    <string name="volume_down">Volume -</string>
+    <string-array name="options">
+        <item>opt1</item>
+    </string-array>
+</resources>
