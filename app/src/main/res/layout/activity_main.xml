@@ -1,15 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="16dp"
+    android:paddingTop="16dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:columnCount="3"
     tools:context=".MainActivity">
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_gravity="fill_horizontal"
+        android:text="@string/tv"
+        android:layout_row="0"
+        android:layout_columnSpan="3" />
 
     <Button
         android:id="@+id/tv_power"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_row="1"
+        android:layout_column="0"
         android:text="@string/tv_power"
         android:onClick="updateTVButton" />
 
@@ -17,6 +31,8 @@
         android:id="@+id/tv_volume_inc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_row="1"
+        android:layout_column="1"
         android:text="@string/volume_up"
         android:onClick="updateTVButton" />
 
@@ -24,7 +40,80 @@
         android:id="@+id/tv_volume_dec"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_row="1"
+        android:layout_column="2"
         android:text="@string/volume_down"
         android:onClick="updateTVButton" />
 
-</LinearLayout>
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_gravity="fill_horizontal"
+        android:layout_row="2"
+        android:layout_column="0"
+        android:text="@string/apple_tv" />
+
+    <Button
+        android:id="@+id/apple_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_row="3"
+        android:layout_column="1"
+        android:onClick="updateTVButton"
+        android:text="UP" />
+
+    <Button
+        android:id="@+id/apple_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_row="4"
+        android:layout_column="0"
+        android:text="Left"
+        android:onClick="updateTVButton" />
+
+    <Button
+        android:id="@+id/apple_select"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/select"
+        android:layout_row="4"
+        android:layout_column="1"
+        android:onClick="updateTVButton" />
+
+    <Button
+        android:id="@+id/apple_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_row="4"
+        android:layout_column="2"
+        android:text="Right"
+        android:onClick="updateTVButton" />
+
+    <Button
+        android:id="@+id/apple_down"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_row="5"
+        android:layout_column="1"
+        android:text="Down"
+        android:onClick="updateTVButton" />
+
+    <Button
+        android:id="@+id/apple_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_row="6"
+        android:layout_column="0"
+        android:text="@string/menu"
+        android:onClick="updateTVButton" />
+
+    <Button
+        android:id="@+id/apple_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_row="6"
+        android:layout_column="1"
+        android:text="@string/play"
+        android:onClick="updateTVButton" />
+
+</GridLayout>
