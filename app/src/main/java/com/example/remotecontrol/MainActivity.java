@@ -13,9 +13,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    // IR Commands for Samsung TV UE32H...
-    // from http://www.remotecentral.com/cgi-bin/codes/samsung/tv_functions/
-
+    // IR Commands for Samsung TV
+    //http://irdb.tk/codes/
     private final static String CMD_TV_POWER =
             "0000 006C 0000 0022 00AD 00AD 0016 0041 0016 0041 0016 0041 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0041 0016 0041 0016 0041 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0041 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0041 0016 0016 0016 0041 0016 0041 0016 0041 0016 0041 0016 0041 0016 0041 0016 06FB";
 
@@ -82,6 +81,9 @@ public class MainActivity extends AppCompatActivity {
     private final static String CMD_SB_VOLDOWN =
             "0000 006C 0000 0027 00AC 00AC 0013 0013 0013 0013 0013 0013 0013 0013 0013 003A 0013 003A 0013 0013 0013 0013 0013 003A 0013 003A 0013 003A 0013 003A 0013 0013 0013 0013 0013 0013 0013 0013 0013 00AC 0013 0013 0013 0013 0013 0013 0013 0013 0013 0013 0013 0013 0013 0013 0013 003A 0013 003A 0013 003A 0013 003A 0013 0013 0013 003A 0013 003A 0013 003A 0013 0013 0013 0013 0013 0013 0013 0013 0013 003A 0013 0856";
 
+
+    // Roku codes
+    // http://www.remotecentral.com/cgi-bin/mboard/rc-pronto/thread.cgi?27510,last#last
     private ConsumerIrManager irManager;
 
     @Override
