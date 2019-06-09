@@ -10,5 +10,4 @@ Tested on two different samsung TVs and an apple TV.
  - add junit tests
  - add a remote IR db that the local one uses to update when it doesn't 
   find the pronto code
- - investigate feasbility of this being done with ReactNative suspect
-will need to do this in swift
+ - investigate doing this in swift for iphone

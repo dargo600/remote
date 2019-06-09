@@ -1,10 +1,15 @@
 <resources>
     <string name="app_name">Remote Control</string>
     <string name="tv">TV</string>
-    <string name="tv_power">Power</string>
+    <string name="apple_tv">Apple TV</string>
+    <string name="power">PWR</string>
+    <string name="source">SRC</string>
     <string name="volume_up">Volume +</string>
     <string name="volume_down">Volume -</string>
-    <string name="apple_tv">Apple TV</string>
+    <string name="up">Up</string>
+    <string name="left">Left</string>
+    <string name="right">Right</string>
+    <string name="down">Down</string>
     <string name="select">Select</string>
     <string name="menu">Menu</string>
     <string name="play">Play/Pause</string>
