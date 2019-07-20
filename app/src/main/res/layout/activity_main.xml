@@ -30,7 +30,7 @@
         android:background="@drawable/button"
         android:contentDescription="@string/power"
         android:minWidth="40dp"
-        android:onClick="updateTVButton"
+        android:onClick="processTVButton"
         android:text="@string/power"
         android:textColor="@color/button_text" />
 
@@ -45,7 +45,7 @@
         android:background="@drawable/button"
         android:textColor="@color/button_text"
         android:text="@string/source"
-        android:onClick="updateTVButton" />
+        android:onClick="processTVButton" />
 
     <ImageButton
         android:id="@+id/tv_volume_dec"
@@ -55,7 +55,7 @@
         android:layout_row="2"
         android:layout_column="0"
         app:srcCompat="@drawable/ic_volume_down_white_24dp"
-        android:onClick="updateTVButton" />
+        android:onClick="processTVButton" />
 
     <ImageButton
         android:id="@+id/tv_volume_inc"
@@ -65,7 +65,7 @@
         android:layout_row="2"
         android:layout_column="1"
         app:srcCompat="@drawable/ic_volume_up_white_24dp"
-        android:onClick="updateTVButton" />
+        android:onClick="processTVButton" />
 
     <TextView
         android:layout_height="wrap_content"
@@ -78,17 +78,17 @@
         android:layout_columnSpan="3" />
 
     <ImageButton
-        android:id="@+id/apple_up"
+        android:id="@+id/up"
         android:contentDescription="@string/up"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_row="4"
         android:layout_column="1"
-        android:onClick="updateTVButton"
+        android:onClick="processMediaButton"
         app:srcCompat="@drawable/ic_keyboard_arrow_up_white_24dp" />
 
     <Button
-        android:id="@+id/apple_menu"
+        android:id="@+id/menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_row="4"
@@ -97,61 +97,61 @@
         android:background="@drawable/button"
         android:contentDescription="@string/menu"
         android:minWidth="40dp"
-        android:onClick="updateTVButton"
+        android:onClick="processMediaButton"
         android:text="@string/menu"
         android:textColor="@color/button_text" />
 
     <ImageButton
-        android:id="@+id/apple_play"
+        android:id="@+id/play"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_row="4"
         android:layout_column="4"
         android:background="@drawable/button"
         android:contentDescription="@string/play"
-        android:onClick="updateTVButton"
+        android:onClick="processMediaButton"
         android:text="@string/play"
         android:textColor="@color/button_text"
         app:srcCompat="@drawable/ic_play_arrow_24dp" />
 
     <ImageButton
-        android:id="@+id/apple_left"
+        android:id="@+id/left"
         android:contentDescription="@string/left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_row="5"
         android:layout_column="0"
         app:srcCompat="@drawable/ic_keyboard_arrow_left_white_24dp"
-        android:onClick="updateTVButton" />
+        android:onClick="processMediaButton" />
 
     <ImageButton
-        android:id="@+id/apple_select"
+        android:id="@+id/select"
         android:contentDescription="@string/select"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_row="5"
         android:layout_column="1"
         app:srcCompat="@drawable/ic_lens_white_24dp"
-        android:onClick="updateTVButton" />
+        android:onClick="processMediaButton" />
 
     <ImageButton
-        android:id="@+id/apple_right"
+        android:id="@+id/right"
         android:contentDescription="@string/right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_row="5"
         android:layout_column="2"
         app:srcCompat="@drawable/ic_keyboard_arrow_right_white_24dp"
-        android:onClick="updateTVButton" />
+        android:onClick="processMediaButton" />
 
     <ImageButton
-        android:id="@+id/apple_down"
+        android:id="@+id/down"
         android:contentDescription="@string/down"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_row="6"
         android:layout_column="1"
         app:srcCompat="@drawable/ic_keyboard_arrow_down_white_24dp"
-        android:onClick="updateTVButton" />
+        android:onClick="processMediaButton" />
 
 </GridLayout>
