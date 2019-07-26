@@ -1,15 +1,15 @@
 ## Remote Control App for Android Devices ##
 A remote control app for which uses the the Consumer IR Service
-to transmit the proper code for various Devices.
-Tested on two different samsung TVs and an apple TV.
+to transmit the proper code for various Devices.  On boot it creates a seperate
+thread that first checks it's own database state and consults a
+known remote REST server that populates the known database IR codes that have been
+tested.  It then creates a group of objects with the configurations that are in use
+ to avoid the need to have to consult the database other than at start up.
 
 ### Todo: ###
- - add a sqlite database for the various different IR codes
  - add support for other devices such as Roku
  - improve the display menu.  Provide a configuration Activity 
  - add espresso/junit tests
- - add a remote IR db that the local one uses to update when it doesn't 
-  find the pronto code
  - investigate doing this in swift for iphone
 
 ### Pronto Hex Format ###
