@@ -39,3 +39,18 @@ Each Burst pair consists of two 4 digit Hex numbers representing the On and
 Off time of that burst (single binary Bit).
 4. The fourth number is the number of Burst Pairs in Burst Pair Sequence #2.
 
+### Directory Structure
+
+.data
+
+The data layer: This deals with the data layer of the tasks. It contains the
+database, network and repository code.
+
+.remote
+
+The remote screen: UI layer code for the remote screen.
+
+.util
+
+Utility classes: Shared classes used in various parts of the app, e.g. for
+handling file access or Exceptions

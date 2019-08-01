@@ -1,4 +1,4 @@
-package com.example.remotecontrol;
+package com.example.remotecontrol.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,7 +10,7 @@ public class DeviceConfiguration {
     private HashMap<String, RCButton> rcButtons;
     private ArrayList<Integer> supportedDevices;
 
-    DeviceConfiguration(int id, String name, String type) {
+    public DeviceConfiguration(int id, String name, String type) {
         deviceConfigID = id;
         configName = name;
         deviceType = parseDeviceType(type);
@@ -28,18 +28,21 @@ public class DeviceConfiguration {
     }
 
     public int getDeviceConfigID() {
+
         return deviceConfigID;
     }
 
     public String getConfigName() {
+
         return configName;
     }
 
     public boolean addRCButton(String buttonType, RCButton button) {
         if (rcButtons.containsKey(buttonType)) {
-            android.util.Log.d("Remote", "Button already exists for " +
+            /** @todo this shouldn't occur need to fix this
+             *  android.util.Log.d("Remote", "Button already exists for " +
                                 buttonType);
-
+*/
             return false;
         }
         rcButtons.put(buttonType, button);

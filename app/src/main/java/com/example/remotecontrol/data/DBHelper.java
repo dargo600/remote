@@ -1,18 +1,22 @@
-package com.example.remotecontrol;
+package com.example.remotecontrol.data;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
-public class DBHelper extends SQLiteOpenHelper {
+import com.example.remotecontrol.util.*;
+
+public class DBHelper extends SQLiteOpenHelper  {
 
     private final String TAG = DBHelper.class.getSimpleName();
+    private final int MAX_DB_TRIES = 3;
     private static final String DB_NAME = "remote";
     private static final int DB_VERSION = 1;
 
-    DBHelper(Context context) {
+    public DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
 
@@ -101,5 +105,66 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put("ir_code", prontoCode);
         values.put("device_config_id", deviceConfigId);
         db.insert("rc_buttons", null, values);
+    }
+
+
+    public boolean isDBEmpty() throws DBReadException {
+        int count = 0;
+        SQLiteDatabase db = getReadableDB();
+
+        if (db != null) {
+            Cursor cursor = db.query("requested_configs",
+                    new String[]{"_id", "name"},
+                    null, null, null,
+                    null, null);
+            count = cursor.getCount();
+            cursor.close();
+            db.close();
+        }
+
+        return count == 0;
+    }
+
+    private SQLiteDatabase getReadableDB() throws DBReadException {
+        SQLiteDatabase db = null;
+        for (int attempts = 1; true; attempts++) {
+            try {
+                db = getReadableDatabase();
+                break;
+            } catch (SQLiteException e) {
+                if (attempts < (MAX_DB_TRIES - 1)) {
+                    int seconds = 1;
+                    attemptThreadDelay(seconds);
+                } else {
+                    handleEmptyDetectFailed();
+                    break;
+                }
+            }
+        }
+
+        return db;
+    }
+
+    private void attemptThreadDelay(int seconds) {
+        try {
+            Thread.sleep(1000 * seconds);
+        } catch (InterruptedException ie) {
+            LogUtil.logError(TAG, "Failed to sleep " + seconds + " s ");
+        }
+    }
+
+    private void handleEmptyDetectFailed() throws DBReadException {
+        String msg = "Failed to determine if db was empty after " + MAX_DB_TRIES + " tries";
+        LogUtil.logError(TAG, msg);
+        throw new DBReadException(msg);
+    }
+
+    public void addDefaultRequestedConfigs() {
+        SQLiteDatabase db = getWritableDatabase();
+        if (db != null) {
+            insertRequestedConfig(db, "samsungConfig1");
+            insertRequestedConfig(db, "appleConfig1");
+            db.close();
+        }
     }
 }

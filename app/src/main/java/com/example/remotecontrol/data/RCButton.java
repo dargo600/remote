@@ -1,4 +1,4 @@
-package com.example.remotecontrol;
+package com.example.remotecontrol.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,10 +20,6 @@ public class RCButton {
                 Arrays.asList(irData.split(" ")));
         calculateFrequency(list);
         calculateIRPatternFromFrequency(list);
-
-        android.util.Log.d("Remote", "Button Type" + buttonType +
-                            "frequency" + frequency);
-        android.util.Log.d("Remote", "pattern" + Arrays.toString(irPattern));
     }
 
     private void calculateFrequency(List<String> irList) {
@@ -36,6 +32,7 @@ public class RCButton {
     }
 
     public int[] getIrPattern() {
+
         return irPattern;
     }
 

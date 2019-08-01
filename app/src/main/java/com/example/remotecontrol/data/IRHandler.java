@@ -1,9 +1,10 @@
-package com.example.remotecontrol;
+package com.example.remotecontrol.data;
 
 import android.hardware.ConsumerIrManager;
 
+import com.example.remotecontrol.util.LogUtil;
+
 import java.util.HashMap;
-import java.util.Arrays;
 
 public class IRHandler {
 
@@ -34,6 +35,10 @@ public class IRHandler {
 
     public boolean processMediaId(String id, String mediaType) {
         String desiredConfig = desiredConfigs.get(mediaType);
+        if (deviceConfigs == null) {
+            LogUtil.logError("FIXME", "why is device config null in procesmedia");
+            return false;
+        }
         if (desiredConfig.length() > 0) {
             DeviceConfiguration device = deviceConfigs.get(desiredConfig);
             if (device == null) {

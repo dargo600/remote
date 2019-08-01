@@ -1,4 +1,4 @@
-package com.example.remotecontrol;
+package com.example.remotecontrol.remote;
 
 import android.content.Context;
 import android.hardware.ConsumerIrManager;
@@ -10,10 +10,22 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.remotecontrol.data.ConfigRetriever;
+import com.example.remotecontrol.data.ConfigRetrieverImpl;
+import com.example.remotecontrol.data.DBHelper;
+import com.example.remotecontrol.data.DeviceConfiguration;
+import com.example.remotecontrol.data.IRHandler;
+import com.example.remotecontrol.R;
+import com.example.remotecontrol.data.ConfigManager;
+import com.example.remotecontrol.util.DBReadException;
+import com.example.remotecontrol.util.ParseConfigException;
+
 import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import com.example.remotecontrol.util.LogUtil;
 
 public class MainActivity extends AppCompatActivity {
     private final String TAG = MainActivity.class.getSimpleName();
@@ -22,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<HashMap<String, String>> deviceList;
     private IRHandler irHandler;
     private ConfigManager configManager;
+    private ConfigRetriever configRetriever;
     private DBHelper dbHelper;
 
     @Override
@@ -50,12 +63,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void processIRDetected() {
         dbHelper = new DBHelper(this);
-        configManager = new ConfigManager(dbHelper, this);
+        configRetriever = new ConfigRetrieverImpl(dbHelper);
+        configManager = new ConfigManager(configRetriever, this);
         new GetRemoteConfiguration().execute();
         setContentView(R.layout.activity_main);
     }
 
     private class GetRemoteConfiguration extends AsyncTask<Void, Void, Boolean> {
+        private String errorMessage;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -65,77 +81,35 @@ public class MainActivity extends AppCompatActivity {
         protected Boolean doInBackground(Void... arg0) {
             Boolean succeeded = false;
             try {
-                boolean processedConfig = configManager.processConfiguration();
-                if (!processedConfig) {
-
-                    Log.e(TAG, "Failed to get json from server.");
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                             Toast t = Toast.makeText(getApplicationContext(),
-                                     "Failed to get json from server",
-                             Toast.LENGTH_LONG);
-                             t.show();
-                        }
-                    });
-                } else {
-                    boolean isInitialized =
-                            configManager.initializeDeviceConfigurations();
-                    if (isInitialized)
-                    {
-                        HashMap<String, DeviceConfiguration> configs =
-                                configManager.getRequestedConfigs();
-                        irHandler.updateDeviceConfigs(configs);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast t = Toast.makeText(getApplicationContext(),
-                                        "Config fully processed",
-                                        Toast.LENGTH_LONG);
-                                t.show();
-                            }
-                        });
-                        succeeded = true;
-                    } else {
-                        Log.e(TAG, "Config not initialized ");
-                        succeeded = false;
-                    }
-                }
+                HashMap<String, DeviceConfiguration> requestedConfigs;
+                requestedConfigs = configManager.initializeConfigs();
+                irHandler.updateDeviceConfigs(requestedConfigs);
+                succeeded = true;
+            } catch (DBReadException | ParseConfigException e) {
+                errorMessage = "Failed to get json from server" + e.getMessage();
+                LogUtil.logError(TAG, errorMessage);
             } catch (JSONException e) {
-                Log.e(TAG, "Json parsing error " + e.getMessage());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast t = Toast.makeText(getApplicationContext(),
-                                "Json parsing error",
-                                Toast.LENGTH_LONG);
-                        t.show();
-                    }
-                });
+                errorMessage = "Json parsing error " + e.getMessage();
+                LogUtil.logError(TAG, errorMessage);
             } catch (SQLiteException e) {
-                Log.e(TAG, "DB error " + e.getMessage());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast t = Toast.makeText(getApplicationContext(),
-                                "db error",
-                                Toast.LENGTH_LONG);
-                        t.show();
-                    }
-                });
+                errorMessage = "DB error " + e.getMessage();
+                LogUtil.logError(TAG, errorMessage);
+            } catch (Exception e) {
+                errorMessage = "Error: " + e.getMessage();
+                LogUtil.logError(TAG, errorMessage);
             }
-            downloadAttempted = true;
 
             return succeeded;
         }
 
         @Override
         protected void onPostExecute(Boolean success) {
+            String msg = "Config fully processed";
             if (!success) {
-                Toast toast = Toast.makeText(MainActivity.this,
-                        "Database unavailable", Toast.LENGTH_SHORT);
-                toast.show();
+                msg = errorMessage;
+                LogUtil.logError(TAG, msg);
             }
+            Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
         }
     }
 

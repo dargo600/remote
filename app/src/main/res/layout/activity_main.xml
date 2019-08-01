@@ -10,7 +10,7 @@
     android:paddingRight="16dp"
     android:columnCount="5"
     android:background="@android:color/black"
-    tools:context=".MainActivity">
+    tools:context=".remote.MainActivity">
 
     <TextView
         android:layout_height="wrap_content"
