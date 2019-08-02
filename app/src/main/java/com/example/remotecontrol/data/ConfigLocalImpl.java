@@ -32,6 +32,9 @@ public class ConfigLocalImpl implements ConfigLocal {
             throw new DBReadException("Failed to Determine Config");
         }
 
+        if (!ret) {
+            LogUtil.logDebug(TAG, "Database Detected");
+        }
         return ret;
     }
 
