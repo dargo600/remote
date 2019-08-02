@@ -125,7 +125,7 @@ public class DBHelper extends SQLiteOpenHelper  {
         return count == 0;
     }
 
-    private SQLiteDatabase getReadableDB() throws DBReadException {
+    public SQLiteDatabase getReadableDB() throws DBReadException {
         SQLiteDatabase db = null;
         for (int attempts = 1; true; attempts++) {
             try {

@@ -6,19 +6,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.database.sqlite.SQLiteException;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.remotecontrol.data.ConfigRetriever;
-import com.example.remotecontrol.data.ConfigRetrieverImpl;
-import com.example.remotecontrol.data.DBHelper;
-import com.example.remotecontrol.data.DeviceConfiguration;
-import com.example.remotecontrol.data.IRHandler;
+import com.example.remotecontrol.data.*;
+import com.example.remotecontrol.util.*;
 import com.example.remotecontrol.R;
-import com.example.remotecontrol.data.ConfigManager;
-import com.example.remotecontrol.util.DBReadException;
-import com.example.remotecontrol.util.ParseConfigException;
 
 import org.json.JSONException;
 
@@ -29,12 +22,14 @@ import com.example.remotecontrol.util.LogUtil;
 
 public class MainActivity extends AppCompatActivity {
     private final String TAG = MainActivity.class.getSimpleName();
+    private final String baseURL = "http://phaedra:5000/api/";
 
     private boolean downloadAttempted = false;
     private ArrayList<HashMap<String, String>> deviceList;
     private IRHandler irHandler;
     private ConfigManager configManager;
-    private ConfigRetriever configRetriever;
+    private ConfigRemoteRetriever configRetriever;
+    private ConfigLocal configLocal;
     private DBHelper dbHelper;
 
     @Override
@@ -63,8 +58,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void processIRDetected() {
         dbHelper = new DBHelper(this);
-        configRetriever = new ConfigRetrieverImpl(dbHelper);
-        configManager = new ConfigManager(configRetriever, this);
+        configRetriever = new ConfigRemoteRetrieverImpl(dbHelper, baseURL);
+        configLocal = new ConfigLocalImpl(dbHelper);
+        configManager = new ConfigManager(this, configRetriever, configLocal);
         new GetRemoteConfiguration().execute();
         setContentView(R.layout.activity_main);
     }
@@ -81,12 +77,14 @@ public class MainActivity extends AppCompatActivity {
         protected Boolean doInBackground(Void... arg0) {
             Boolean succeeded = false;
             try {
-                HashMap<String, DeviceConfiguration> requestedConfigs;
-                requestedConfigs = configManager.initializeConfigs();
-                irHandler.updateDeviceConfigs(requestedConfigs);
+                if (configManager.isLocalEmpty()) {
+                    configManager.processEmptyLocal();
+                }
+                configManager.initFromLocal();
+                irHandler.updateDeviceConfigs(configManager.getRequestedConfigs());
                 succeeded = true;
             } catch (DBReadException | ParseConfigException e) {
-                errorMessage = "Failed to get json from server" + e.getMessage();
+                errorMessage = "Failed to get json from server " + e.getMessage();
                 LogUtil.logError(TAG, errorMessage);
             } catch (JSONException e) {
                 errorMessage = "Json parsing error " + e.getMessage();

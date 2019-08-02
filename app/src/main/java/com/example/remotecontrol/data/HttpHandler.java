@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 
 import com.example.remotecontrol.util.LogUtil;
 import com.example.remotecontrol.util.ParseConfigException;
@@ -21,9 +22,15 @@ public class HttpHandler {
         String response = null;
         try {
             URL url = new URL(reqUrl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            InputStream in = new BufferedInputStream(conn.getInputStream());
+            InputStream in;
+            if (reqUrl.startsWith("file:///")) {
+                URLConnection conn = url.openConnection();
+                in = new BufferedInputStream(conn.getInputStream());
+            } else {
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                in = new BufferedInputStream(conn.getInputStream());
+            }
             response = convertStreamToString(in);
         } catch (Exception e) {
             String msg = "Exception: " + e.getMessage();

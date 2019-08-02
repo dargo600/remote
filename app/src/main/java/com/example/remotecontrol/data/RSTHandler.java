@@ -11,38 +11,10 @@ public class RSTHandler {
     private DBHelper dbHelper;
 
     public RSTHandler(DBHelper dbHelper) {
-
         this.dbHelper = dbHelper;
     }
 
-    public boolean
-    downloadAndProcessConfigData() throws Exception {
-        return (processDataType("device_configs") &&
-                processDataType("devices"));
-    }
-
-    private boolean
-    processDataType(String dataType) throws Exception {
-        HttpHandler httpHandler = new HttpHandler();
-        String url = "http://phaedra:5000/api/" + dataType;
-        String jsonStr = httpHandler.processURL(url);
-
-        if (jsonStr == null || jsonStr.length() == 0) {
-            return false;
-        }
-        System.out.println("FIXME " + jsonStr);
-        if (dataType.equals("device_configs")) {
-            parseDeviceConfigurations(jsonStr);
-        } else if (dataType.equals("devices")) {
-            parseDevices(jsonStr);
-        } else {
-            return false;
-        }
-
-        return true;
-    }
-
-    private void
+    public void
     parseDeviceConfigurations(String jsonStr) throws JSONException, SQLiteException {
         JSONArray deviceConfigs = new JSONArray(jsonStr);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -50,7 +22,6 @@ public class RSTHandler {
             JSONObject dc = deviceConfigs.getJSONObject(i);
             parseDeviceConfig(dc, db);
         }
-        db.close();
     }
 
     private void
@@ -68,7 +39,7 @@ public class RSTHandler {
         }
     }
 
-    private void
+    public void
     parseDevices(String jsonStr) throws JSONException, SQLiteException {
         JSONArray devices = new JSONArray(jsonStr);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -76,7 +47,6 @@ public class RSTHandler {
             JSONObject d = devices.getJSONObject(i);
             parseDevice(d, db);
         }
-        db.close();
     }
 
     private void

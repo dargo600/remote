@@ -41,16 +41,24 @@ Off time of that burst (single binary Bit).
 
 ### Directory Structure
 
-.data
+In Java Main Source the following directories exist:
+
+data
 
 The data layer: This deals with the data layer of the tasks. It contains the
 database, network and repository code.
 
-.remote
+remote
 
 The remote screen: UI layer code for the remote screen.
 
-.util
+util
 
 Utility classes: Shared classes used in various parts of the app, e.g. for
 handling file access or Exceptions
+
+In Unit Test Source,
+
+data
+
+Where the Pronto codes can be found for testing purposes

@@ -1,5 +1,8 @@
 package com.example.remotecontrol.data;
 
+import com.example.remotecontrol.util.LogUtil;
+import com.example.remotecontrol.util.ParseConfigException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -37,18 +40,16 @@ public class DeviceConfiguration {
         return configName;
     }
 
-    public boolean addRCButton(String buttonType, RCButton button) {
+    public void addRCButton(String buttonType, RCButton button)  {
         if (rcButtons.containsKey(buttonType)) {
-            /** @todo this shouldn't occur need to fix this
-             *  android.util.Log.d("Remote", "Button already exists for " +
-                                buttonType);
-*/
-            return false;
+            /** FIXME
+            String msg = "Button exists for " + buttonType;
+            throw new ParseConfigException(msg);
+             */
         }
         rcButtons.put(buttonType, button);
-
-        return true;
     }
+
 
     public void addDevice(int deviceConfigID) {
         supportedDevices.add(deviceConfigID);

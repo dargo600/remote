@@ -4,70 +4,63 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
-import com.example.remotecontrol.util.LogUtil;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ConfigRetrieverImpl implements ConfigRetriever {
+import com.example.remotecontrol.util.*;
 
-    private final String TAG = ConfigRetrieverImpl.class.getSimpleName();
+public class ConfigLocalImpl implements ConfigLocal {
+    private final String TAG = ConfigLocalImpl.class.getSimpleName();
+
+    private DBHelper dbHelper;
 
     private ArrayList<String> desiredConfigs;
     private HashMap<String, DeviceConfiguration> requestedConfigs;
 
-    private DBHelper dbHelper;
-    private RSTHandler rstHandler;
-
-    public ConfigRetrieverImpl(DBHelper dbHelper) {
+    public ConfigLocalImpl(DBHelper dbHelper) {
         this.dbHelper = dbHelper;
-        rstHandler = new RSTHandler(dbHelper);
-        requestedConfigs = new HashMap<>();
         desiredConfigs = new ArrayList<>();
+        requestedConfigs = new HashMap<>();
     }
 
-    /**
-     * This seems to get called twice for some reason not too sure why.  We
-     * just do nothing on the second try otherwise there are problems */
-    public HashMap<String, DeviceConfiguration>
-    getRequestedConfigs() throws Exception {
-        LogUtil.logDebug(TAG, "Attempting Requested Config Update");
-        if (desiredConfigs.isEmpty()) {
-            initDBIfEmpty();
-            boolean isInitialized = initDeviceConfigs();
-            if (isInitialized) {
-                requestedConfigs = getRequestedConfigs();
+    public boolean isConfigEmpty() throws DBReadException {
+        boolean ret = true;
+        try {
+            ret = dbHelper.isDBEmpty();
+        } catch (Exception e) {
+            LogUtil.logError(TAG, "Error: " + e);
+            throw new DBReadException("Failed to Determine Config");
+        }
+
+        return ret;
+    }
+
+    public void addDefaultDesiredConfig() throws Exception {
+        dbHelper.addDefaultRequestedConfigs();
+    }
+
+    public void initFromLocal() throws ParseConfigException {
+        try {
+            initDeviceConfigs();
+            if (requestedConfigs.isEmpty()) {
+                throw new ParseConfigException("Could not get requested Configs");
             }
-        } else {
-            LogUtil.logDebug(TAG, "Requested Config Already Retrieved");
+        } catch (Exception e) {
+            throw new ParseConfigException("Failed to ParseDB" + e.getMessage());
         }
-
-        return requestedConfigs;
     }
 
-    private void initDBIfEmpty() throws Exception  {
-        LogUtil.logDebug(TAG, "Downloading Database...");
-        if(dbHelper.isDBEmpty()){
-            dbHelper.addDefaultRequestedConfigs();
-            LogUtil.logDebug(TAG, "Downloading Database...");
-            rstHandler.downloadAndProcessConfigData();
-        }
-
-        LogUtil.logDebug(TAG, "Database initialized");
-    }
-
-    public boolean
-    initDeviceConfigs() throws SQLiteException {
-        boolean requestedConfigsInitialized = false;
+    private void
+    initDeviceConfigs() throws Exception {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         initializeDesiredConfigs(db);
         for (String configName : desiredConfigs) {
             populateDeviceConfig(db, configName);
-            requestedConfigsInitialized = true;
         }
         db.close();
-
-        return requestedConfigsInitialized;
+        if (desiredConfigs.isEmpty()) {
+            throw new ParseConfigException("Desired configs are empty");
+        }
     }
 
     private void
@@ -88,7 +81,7 @@ public class ConfigRetrieverImpl implements ConfigRetriever {
     }
 
     private void
-    populateDeviceConfig(SQLiteDatabase db, String configName) {
+    populateDeviceConfig(SQLiteDatabase db, String configName) throws Exception {
         String query = "SELECT dc.device_config_id, d.device_type FROM " +
                 "device_configs AS dc, devices AS d WHERE " +
                 "d.device_config_id==dc.device_config_id AND dc.name = ?";
@@ -106,11 +99,11 @@ public class ConfigRetrieverImpl implements ConfigRetriever {
     }
 
     private DeviceConfiguration
-    addButtonsToConfig(SQLiteDatabase db, DeviceConfiguration dc) {
+    addButtonsToConfig(SQLiteDatabase db, DeviceConfiguration dc) throws Exception {
         String query = "SELECT r.rc_type, r.ir_code FROM rc_buttons AS r " +
                 "WHERE r.device_config_id= ?";
         Cursor cursor = db.rawQuery(query,
-                new String[] {Integer.toString(dc.getDeviceConfigID())});
+                new String[]{Integer.toString(dc.getDeviceConfigID())});
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             String rcType = cursor.getString(0);
@@ -122,5 +115,9 @@ public class ConfigRetrieverImpl implements ConfigRetriever {
         cursor.close();
 
         return dc;
+    }
+
+    public HashMap<String, DeviceConfiguration> getDeviceConfigs() {
+        return requestedConfigs;
     }
 }

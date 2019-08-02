@@ -35,20 +35,14 @@ public class IRHandler {
 
     public boolean processMediaId(String id, String mediaType) {
         String desiredConfig = desiredConfigs.get(mediaType);
-        if (deviceConfigs == null) {
-            LogUtil.logError("FIXME", "why is device config null in procesmedia");
-            return false;
-        }
-        if (desiredConfig.length() > 0) {
+        if (deviceConfigs != null && desiredConfig.length() > 0) {
             DeviceConfiguration device = deviceConfigs.get(desiredConfig);
-            if (device == null) {
-                return false;
-            }
-            RCButton button = device.getRCButton(id);
-            if (button != null) {
-                sendIRCode(button);
-
-                return true;
+            if (device != null) {
+                RCButton button = device.getRCButton(id);
+                if (button != null) {
+                    sendIRCode(button);
+                    return true;
+                }
             }
         }
 

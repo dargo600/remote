@@ -2,30 +2,40 @@ package com.example.remotecontrol.data;
 
 import android.content.Context;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.example.remotecontrol.util.ParseConfigException;
+import com.example.remotecontrol.util.LogUtil;
 
 public class ConfigManager {
-    private ArrayList<String> desiredConfigs;
-    private HashMap<String, DeviceConfiguration> requestedConfigs;
-    private ConfigRetriever retriever;
-    private Context mainContext;
+    private final String TAG = ConfigManager.class.getSimpleName();
+    private final String baseURL = "http://phaedra:5000/api/";
 
-    public ConfigManager(ConfigRetriever retriever, Context mainContext) {
-        this.retriever = retriever;
+    private Context mainContext;
+    private ConfigRemoteRetriever retriever;
+    private ConfigLocal localConfig;
+
+    public ConfigManager(Context mainContext, ConfigRemoteRetriever retriever,
+                         ConfigLocal local) {
         this.mainContext = mainContext;
-        requestedConfigs = new HashMap<>();
-        desiredConfigs = new ArrayList<>();
+        this.retriever = retriever;
+        this.localConfig = local;
     }
 
-    public HashMap<String, DeviceConfiguration> initializeConfigs() throws Exception {
-        requestedConfigs = retriever.getRequestedConfigs();
-        if (requestedConfigs.isEmpty()) {
-            throw new ParseConfigException("Device Configuration is empty");
-        }
+    public boolean isLocalEmpty() throws Exception {
+       return localConfig.isConfigEmpty();
+    }
 
-        return requestedConfigs;
+    public void processEmptyLocal() throws Exception {
+        localConfig.addDefaultDesiredConfig();
+        retriever.syncToRemote();
+    }
+
+    public void initFromLocal()  throws Exception {
+        localConfig.initFromLocal();
+        LogUtil.logDebug(TAG, "Finished Initialization");
+    }
+
+    public HashMap<String, DeviceConfiguration> getRequestedConfigs() {
+        return localConfig.getDeviceConfigs();
     }
 }
