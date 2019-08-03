@@ -4,33 +4,20 @@ import android.content.Context;
 import android.hardware.ConsumerIrManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.database.sqlite.SQLiteException;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
 import com.example.remotecontrol.data.*;
-import com.example.remotecontrol.util.*;
 import com.example.remotecontrol.R;
-
-import org.json.JSONException;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 import com.example.remotecontrol.util.LogUtil;
 
 public class MainActivity extends AppCompatActivity {
     private final String TAG = MainActivity.class.getSimpleName();
-    private final String baseURL = "http://phaedra:5000/api/";
 
+    private RemoteMain remoteMain;
     private boolean downloadAttempted = false;
-    private ArrayList<HashMap<String, String>> deviceList;
-    private IRHandler irHandler;
-    private ConfigManager configManager;
-    private ConfigRemoteRetriever configRetriever;
-    private ConfigLocal configLocal;
-    private DBHelper dbHelper;
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -45,9 +32,9 @@ public class MainActivity extends AppCompatActivity {
             downloadAttempted = savedInstanceState.getBoolean("downloadAttempted");
         }
         ConsumerIrManager ir = (ConsumerIrManager)this.getSystemService(Context.CONSUMER_IR_SERVICE);
-        irHandler = new IRHandler(ir);
+        IRHandler irHandler = new IRHandler(ir);
         if (irHandler.detectRemoteControl()) {
-            processIRDetected();
+            processIRDetected(irHandler);
         } else {
             Toast toast = Toast.makeText(this, "IR emitter unavailable",
                     Toast.LENGTH_SHORT);
@@ -56,13 +43,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void processIRDetected() {
-        dbHelper = new DBHelper(this);
-        configRetriever = new ConfigRemoteRetrieverImpl(dbHelper, baseURL);
-        configLocal = new ConfigLocalImpl(dbHelper);
-        configManager = new ConfigManager(this, configRetriever, configLocal);
+    private void processIRDetected(IRHandler irHandler) {
+        DBHelperImpl dbHelper = new DBHelperImpl(this);
+        initRemoteMain(irHandler, dbHelper);
         new GetRemoteConfiguration().execute();
         setContentView(R.layout.activity_main);
+    }
+
+    public void initRemoteMain(IRHandler irHandler, DBHelper dbHelper) {
+        remoteMain = new RemoteMain(irHandler, dbHelper);
     }
 
     private class GetRemoteConfiguration extends AsyncTask<Void, Void, Boolean> {
@@ -75,34 +64,14 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... arg0) {
-            Boolean succeeded = false;
-            try {
-                if (configManager.isLocalEmpty()) {
-                    configManager.processEmptyLocal();
-                }
-                configManager.initFromLocal();
-                irHandler.updateDeviceConfigs(configManager.getRequestedConfigs());
-                succeeded = true;
-            } catch (DBReadException | ParseConfigException e) {
-                errorMessage = "Failed to get json from server " + e.getMessage();
-                LogUtil.logError(TAG, errorMessage);
-            } catch (JSONException e) {
-                errorMessage = "Json parsing error " + e.getMessage();
-                LogUtil.logError(TAG, errorMessage);
-            } catch (SQLiteException e) {
-                errorMessage = "DB error " + e.getMessage();
-                LogUtil.logError(TAG, errorMessage);
-            } catch (Exception e) {
-                errorMessage = "Error: " + e.getMessage();
-                LogUtil.logError(TAG, errorMessage);
-            }
+            errorMessage = remoteMain.doBackgroundTask();
 
-            return succeeded;
+            return (errorMessage.length() == 0) ? true : false;
         }
 
         @Override
         protected void onPostExecute(Boolean success) {
-            String msg = "Config fully processed";
+            String msg = "Configuration processed";
             if (!success) {
                 msg = errorMessage;
                 LogUtil.logError(TAG, msg);
@@ -113,21 +82,23 @@ public class MainActivity extends AppCompatActivity {
 
     public void processTVButton(View view) {
         String cd = view.getContentDescription().toString();
-        if (!irHandler.processMediaId(cd, "tv")) {
-            displayError("Unrecognized tv button" + cd);
-        }
+        String msg = remoteMain.processMediaId(cd, "tv");
+        if (msg.length() > 0)
+            displayError(msg);
     }
 
     public void processMediaButton(View view) {
-        String cd = view.getContentDescription().toString();
-        if (!irHandler.processMediaId(cd, "media")) {
-            displayError("Unrecognized media Button " + cd);
+        try {
+            String cd = view.getContentDescription().toString();
+            String msg = remoteMain.processMediaId(cd, "media");
+            if (msg.length() > 0)
+                displayError(msg);
+        } catch (Exception e) {
+            displayError("Error: " + e.getMessage());
         }
     }
 
     private void displayError(String msg) {
-        Toast toast = Toast.makeText(this, msg, Toast.LENGTH_SHORT);
-        toast.show();
-
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 }

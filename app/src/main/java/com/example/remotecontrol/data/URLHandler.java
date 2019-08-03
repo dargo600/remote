@@ -9,28 +9,23 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
+import com.example.remotecontrol.data.streams.URLStream;
 import com.example.remotecontrol.util.LogUtil;
 import com.example.remotecontrol.util.ParseConfigException;
 
-public class HttpHandler {
-    private static final String TAG = HttpHandler.class.getSimpleName();
+public class URLHandler {
+    private static final String TAG = URLHandler.class.getSimpleName();
 
-    public HttpHandler() {
+    private URLStream stream;
+    public URLHandler(URLStream stream) {
+        this.stream = stream;
     }
 
     public String processURL(String reqUrl) throws Exception {
         String response = null;
         try {
             URL url = new URL(reqUrl);
-            InputStream in;
-            if (reqUrl.startsWith("file:///")) {
-                URLConnection conn = url.openConnection();
-                in = new BufferedInputStream(conn.getInputStream());
-            } else {
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("GET");
-                in = new BufferedInputStream(conn.getInputStream());
-            }
+            InputStream in = stream.create(reqUrl, url);
             response = convertStreamToString(in);
         } catch (Exception e) {
             String msg = "Exception: " + e.getMessage();
@@ -40,6 +35,21 @@ public class HttpHandler {
 
         return response;
     }
+
+    private InputStream makeInputStream(String reqUrl, URL url) throws Exception {
+        InputStream in;
+        if (reqUrl.startsWith("file:///")) {
+            URLConnection conn = url.openConnection();
+            in = new BufferedInputStream(conn.getInputStream());
+        } else {
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            in = new BufferedInputStream(conn.getInputStream());
+        }
+
+        return in;
+    }
+
 
     private String convertStreamToString(InputStream is) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));

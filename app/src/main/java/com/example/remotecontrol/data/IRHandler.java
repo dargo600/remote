@@ -8,6 +8,8 @@ import java.util.HashMap;
 
 public class IRHandler {
 
+    private static final String TAG = IRHandler.class.getSimpleName();
+
     private ConsumerIrManager irManager;
     private HashMap<String, DeviceConfiguration> deviceConfigs;
     private HashMap<String, String> desiredConfigs;
@@ -37,12 +39,14 @@ public class IRHandler {
         String desiredConfig = desiredConfigs.get(mediaType);
         if (deviceConfigs != null && desiredConfig.length() > 0) {
             DeviceConfiguration device = deviceConfigs.get(desiredConfig);
-            if (device != null) {
-                RCButton button = device.getRCButton(id);
-                if (button != null) {
-                    sendIRCode(button);
-                    return true;
-                }
+            if (device == null) {
+                return false;
+            }
+            RCButton button = device.getRCButton(id);
+            if (button != null) {
+                sendIRCode(button);
+
+                return true;
             }
         }
 

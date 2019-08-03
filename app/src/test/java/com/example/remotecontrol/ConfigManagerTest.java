@@ -28,13 +28,13 @@ public class ConfigManagerTest {
     Context mockContext;
 
     @Mock
-    ConfigRemoteRetriever mockRemote;
+    ConfigRetriever mockRemote;
 
     @Mock
     ConfigLocal mockLocal;
 
     @Mock
-    DBHelper mockDB;
+    FakeDBHelper mockDB;
 
     /** @todo Fixme investigate issue further
     @Test(expected=DBReadException.class)
@@ -42,40 +42,41 @@ public class ConfigManagerTest {
         LogUtil.enableLogToTerminal();
         String msg = "Failed to readDB";
    //     when(mockDB.getReadableDB()).thenThrow(new DBReadException(msg));
-        ConfigLocal cl = new ConfigLocalImpl(mockDB);
+        ConfigLocal cl = new ConfigLocal(mockDB);
         ConfigManager cm = new ConfigManager(mockContext, mockRemote, cl);
             cm.isLocalEmpty();
     }
-**/
     @Test
-    public void isLocalEmpty_success() throws Exception {
+    public void initLocal_isLocalEmptysuccess() throws Exception {
+        LogUtil.enableLogToTerminal();
         when(mockDB.isDBEmpty()).thenReturn(true);
-        ConfigLocal cl = new ConfigLocalImpl(mockDB);
-        ConfigManager cm = new ConfigManager(mockContext, mockRemote, cl);
-        cm.isLocalEmpty();
+        ConfigLocal cl = new ConfigLocal(mockDB);
+        ConfigManager cm = new ConfigManager(mockRemote, cl);
+        cm.initLocal();
     }
+**/
 
     @Test
-    public void processEmptyLocal() throws Exception {
-        ConfigLocal cl = new ConfigLocalImpl(mockDB);
-        ConfigManager cm = new ConfigManager(mockContext, mockRemote, cl);
-        cm.processEmptyLocal();
-        verify(mockDB, times(1)).addDefaultRequestedConfigs();
-        verify(mockRemote, times(1)).syncToRemote();
+    public void doProcessEmptyLocal_whenDBEmpty() throws Exception {
+        LogUtil.enableLogToTerminal();
+        when(mockDB.isDBEmpty()).thenReturn(true);
+        ConfigLocal cl = new ConfigLocal(new FakeDBHelper());
+        ConfigManager cm = new ConfigManager(mockRemote, cl);
+        cm.initLocal();
     }
 
     @Test
     public void initFromLocal_noException() throws Exception {
         LogUtil.enableLogToTerminal();
-        ConfigManager cm = new ConfigManager(mockContext, mockRemote, mockLocal);
-        cm.initFromLocal();
+        ConfigManager cm = new ConfigManager(mockRemote, mockLocal);
+        cm.initLocal();
         verify(mockLocal, times(1)).initFromLocal();
     }
 
     @Test
     public void getRequestedConfigs_canReturnEmptyList() {
         LogUtil.enableLogToTerminal();
-        ConfigManager cm = new ConfigManager(mockContext, mockRemote, mockLocal);
+        ConfigManager cm = new ConfigManager(mockRemote, mockLocal);
         HashMap<String, DeviceConfiguration> configs = cm.getRequestedConfigs();
         assertTrue(configs.isEmpty());
     }

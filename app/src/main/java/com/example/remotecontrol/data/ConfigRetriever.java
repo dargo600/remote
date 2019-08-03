@@ -1,19 +1,20 @@
 package com.example.remotecontrol.data;
 
+import com.example.remotecontrol.data.streams.URLStream;
 import com.example.remotecontrol.util.LogUtil;
 
-public class ConfigRemoteRetrieverImpl implements ConfigRemoteRetriever {
+public class ConfigRetriever {
 
-    private final String TAG = ConfigRemoteRetrieverImpl.class.getSimpleName();
+    private final String TAG = ConfigRetriever.class.getSimpleName();
 
     private RSTHandler rstHandler;
-    private HttpHandler httpHandler;
+    private URLHandler URLHandler;
     private String baseURL;
 
-    public ConfigRemoteRetrieverImpl (DBHelper dbHelper, String url) {
+    public ConfigRetriever(DBHelper dbHelper, String baseURL, URLStream stream) {
         rstHandler = new RSTHandler(dbHelper);
-        httpHandler = new HttpHandler();
-        baseURL = url;
+        URLHandler = new URLHandler(stream);
+        this.baseURL = baseURL;
     }
 
     public void
@@ -22,7 +23,7 @@ public class ConfigRemoteRetrieverImpl implements ConfigRemoteRetriever {
         String[] configs = { "device_configs", "devices"};
         for (String config : configs) {
             final String url = baseURL + config;
-            String jsonStr = httpHandler.processURL(url);
+            String jsonStr = URLHandler.processURL(url);
             if (jsonStr == null || jsonStr.length() == 0) {
                 continue;
             }
@@ -35,4 +36,6 @@ public class ConfigRemoteRetrieverImpl implements ConfigRemoteRetriever {
             }
         }
     }
+
+
 }

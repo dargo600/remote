@@ -6,22 +6,22 @@ import org.mockito.Mock;
 
 import org.mockito.runners.MockitoJUnitRunner;
 import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
 
 import com.example.remotecontrol.data.*;
 import com.example.remotecontrol.util.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ConfigRemoteRetrieverImplTest {
+public class ConfigRetrieverTest {
 
     @Mock
-    DBHelper mockDB;
+    DBHelperImpl mockDB;
 
     @Test(expected=ParseConfigException.class)
     public void syncToRemote_failedToDownloadDB() throws Exception {
         LogUtil.enableLogToTerminal();
         when(mockDB.getReadableDatabase()).thenReturn(null);
-        ConfigRemoteRetriever remote = new ConfigRemoteRetrieverImpl(mockDB, "http://");
+        FileURLStream stream = new FileURLStream();
+        ConfigRetriever remote = new ConfigRetriever(mockDB, "http://", stream);
         remote.syncToRemote();
     }
 
@@ -31,8 +31,13 @@ public class ConfigRemoteRetrieverImplTest {
         when(mockDB.getReadableDatabase()).thenReturn(null);
         String testDir = "/src/test/java/com/example/remotecontrol/data/";
         String url = "file://" + System.getProperty("user.dir") + testDir;
-        ConfigRemoteRetriever remote = new ConfigRemoteRetrieverImpl(mockDB, url);
+        FileURLStream stream = new FileURLStream();
+        ConfigRetriever remote = new ConfigRetriever(mockDB, url, stream);
         remote.syncToRemote();
+        //verify(mockDB, atLeastOnce()).insertDeviceConfig(anyInt(), anyString());
+        //verify(mockDB, atLeastOnce()).insertButton(anyString(), anyString(), anyInt());
+        //verify(mockDB, atLeastOnce()).insertDevice(anyString(), anyString(), anyString(), anyInt());
+
     }
 
     @Test
@@ -41,7 +46,8 @@ public class ConfigRemoteRetrieverImplTest {
         when(mockDB.getReadableDatabase()).thenReturn(null);
         String testDir = "/src/test/java/com/example/remotecontrol/data/empty_files/";
         String url = "file://" + System.getProperty("user.dir") + testDir;
-        ConfigRemoteRetriever remote = new ConfigRemoteRetrieverImpl(mockDB, url);
+        FileURLStream stream = new FileURLStream();
+        ConfigRetriever remote = new ConfigRetriever(mockDB, url, stream);
         remote.syncToRemote();
     }
 }

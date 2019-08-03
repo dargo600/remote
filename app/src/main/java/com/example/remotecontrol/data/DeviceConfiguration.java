@@ -52,6 +52,7 @@ public class DeviceConfiguration {
 
 
     public void addDevice(int deviceConfigID) {
+
         supportedDevices.add(deviceConfigID);
     }
 

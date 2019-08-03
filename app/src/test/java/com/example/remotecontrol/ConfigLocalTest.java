@@ -5,22 +5,27 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
 import org.mockito.runners.MockitoJUnitRunner;
-import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
 
 import com.example.remotecontrol.data.*;
 import com.example.remotecontrol.util.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ConfigLocalImplTest {
+public class ConfigLocalTest {
 
    @Mock
    DBHelper mockDB;
 
    @Test(expected=ParseConfigException.class)
    public void initFromLocal_throwsException() throws Exception {
-      when(mockDB.getReadableDatabase()).thenReturn(null);
-      ConfigLocalImpl cli = new ConfigLocalImpl(mockDB);
+      ConfigLocal cli = new ConfigLocal(mockDB);
+      cli.initFromLocal();
+   }
+
+   @Test
+   public void initFromLocal_DBAlreadyExists() throws Exception {
+      LogUtil.enableLogToTerminal();
+      FakeDBHelper fakeHelper = new FakeDBHelper();
+      ConfigLocal cli = new ConfigLocal(fakeHelper);
       cli.initFromLocal();
    }
 
