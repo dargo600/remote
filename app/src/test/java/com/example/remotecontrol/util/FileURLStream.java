@@ -1,4 +1,4 @@
-package com.example.remotecontrol;
+package com.example.remotecontrol.util;
 
 import java.io.InputStream;
 import java.io.BufferedInputStream;

@@ -1,87 +1,42 @@
 package com.example.remotecontrol.data;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.remotecontrol.util.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class DBHelperImpl extends SQLiteOpenHelper implements DBHelper {
+public class DBHelperImpl implements DBHelper {
 
     private static final String TAG = DBHelperImpl.class.getSimpleName();
+    private DBConnector dbConnector;
+    private SQLiteDatabase db;
     private static final int MAX_DB_TRIES = 3;
-    private static final String DB_NAME = "remote";
-    private static final int DB_VERSION = 1;
-
     private ArrayList<String> desiredConfigs = new ArrayList<>();
     private HashMap<String, DeviceConfiguration> requestedConfigs = new HashMap<>();
-    private SQLiteDatabase db;
 
-    public DBHelperImpl(Context context) {
-        super(context, DB_NAME, null, DB_VERSION);
+    public DBHelperImpl(DBConnector dbConnector) {
+       this.dbConnector = dbConnector;
     }
 
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-        updateMyDatabase(db, 0, DB_VERSION);
+    public void setDesiredConfigs(ArrayList<String> desiredConfigs) {
+        this.desiredConfigs = desiredConfigs;
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        updateMyDatabase(db, oldVersion, newVersion);
+    public void setRequestedConfigs(HashMap<String, DeviceConfiguration> requestedConfigs) {
+        this.requestedConfigs = requestedConfigs;
     }
 
-    @Override
-    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        updateMyDatabase(db, oldVersion, newVersion);
+    public void initRead() throws Exception {
+        db = dbConnector.initRead();
     }
 
-    private void updateMyDatabase(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion < 1) {
-            db.execSQL("drop table if exists requested_configs");
-            db.execSQL("drop table if exists device_configs;");
-            db.execSQL("drop table if exists devices;");
-            db.execSQL("drop table if exists rc_buttons;");
-
-            db.execSQL("create table requested_configs "
-                     + "(_id integer primary key autoincrement, "
-                     + "name text)");
-            db.execSQL("create table device_configs "
-                     + "(device_config_id integer primary key, "
-                     + "name text);");
-            db.execSQL("create table devices "
-                     + "(_id integer primary key autoincrement, "
-                     + "device_type text, "
-                     + "manufacturer text, "
-                     + "model_num text, "
-                     + "device_config_id integer, "
-                     + "constraint fk_device_configs "
-                     + " foreign key (device_config_id) "
-                     + " references device_configs(device_config_id)"
-                     + ");");
-            db.execSQL("create table rc_buttons "
-                    +  "(_id integer primary key autoincrement, "
-                    + "rc_type text, "
-                    + "ir_code text, "
-                    + "device_config_id integer, "
-                    + "constraint fk_device_configs "
-                    + " foreign key (device_config_id) "
-                    + " references device_configs(device_config_id));");
-        }
-    }
-
-    public void initRead() {
-        db = getReadableDatabase();
-    }
-
-    public void initWrite() {
-        db = getWritableDatabase();
+    public void initWrite() throws Exception {
+        db = dbConnector.initWrite();
     }
 
     public void closeDB() {
@@ -90,23 +45,24 @@ public class DBHelperImpl extends SQLiteOpenHelper implements DBHelper {
 
     public void insertRequestedConfig(String name)
     {
-        ContentValues values = new ContentValues();
+        ContentValues values = dbConnector.makeContentValues();
         values.put("name", name);
         db.insert("requested_configs", null, values);
     }
 
     public void insertDeviceConfig(int deviceConfigId, String name)
     {
-        ContentValues values = new ContentValues();
+        ContentValues values = dbConnector.makeContentValues();
         values.put("device_config_id", deviceConfigId);
         values.put("name", name);
         db.insert("device_configs", null, values);
     }
 
-    public void insertDevice(String deviceType, String manufacturer,
-                             String modelNum, int deviceConfigId)
+    public void
+    insertDevice(String deviceType, String manufacturer, String modelNum,
+                 int deviceConfigId)
     {
-        ContentValues values = new ContentValues();
+        ContentValues values = dbConnector.makeContentValues();
         values.put("device_type", deviceType);
         values.put("manufacturer", manufacturer);
         values.put("model_num", modelNum);
@@ -116,7 +72,7 @@ public class DBHelperImpl extends SQLiteOpenHelper implements DBHelper {
 
     public void insertButton(String type, String prontoCode, int deviceConfigId)
     {
-        ContentValues values = new ContentValues();
+        ContentValues values = dbConnector.makeContentValues();
         values.put("rc_type", type);
         values.put("ir_code", prontoCode);
         values.put("device_config_id", deviceConfigId);
@@ -144,10 +100,10 @@ public class DBHelperImpl extends SQLiteOpenHelper implements DBHelper {
         boolean dbConnected = false;
         for (int attempts = 1; true; attempts++) {
             try {
-                db = getReadableDatabase();
+                db = dbConnector.initRead();
                 dbConnected = true;
                 break;
-            } catch (SQLiteException e) {
+            } catch (Exception e) {
                 if (attempts < (MAX_DB_TRIES - 1)) {
                     int seconds = 1;
                     attemptThreadDelay(seconds);
@@ -175,13 +131,12 @@ public class DBHelperImpl extends SQLiteOpenHelper implements DBHelper {
         throw new DBReadException(msg);
     }
 
-    public void addDefaultRequestedConfigs() {
-        db = getWritableDatabase();
-        if (db != null) {
-            insertRequestedConfig("samsungConfig1");
-            insertRequestedConfig("appleConfig1");
-            db.close();
+    public void addDefaultDesiredConfigs(ArrayList<String> newRequestedConfigs) throws Exception {
+        db = dbConnector.initWrite();
+        for (String config : newRequestedConfigs) {
+            insertRequestedConfig(config);
         }
+        closeDB();
     }
 
     public ArrayList<String> initializeDesiredConfigs() throws SQLiteException {
@@ -241,4 +196,5 @@ public class DBHelperImpl extends SQLiteOpenHelper implements DBHelper {
     public HashMap<String, DeviceConfiguration> getRequestedConfigs() {
         return requestedConfigs;
     }
+
 }

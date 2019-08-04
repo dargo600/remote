@@ -14,7 +14,7 @@ public class RSTHandler {
     }
 
     public void
-    parseDeviceConfigurations(String jsonStr) throws JSONException, SQLiteException {
+    parseDeviceConfigurations(String jsonStr) throws Exception {
         JSONArray deviceConfigs = new JSONArray(jsonStr);
         dbHelper.initWrite();
         for (int i = 0; i < deviceConfigs.length(); i++) {
@@ -31,9 +31,9 @@ public class RSTHandler {
         JSONArray buttons = dc.getJSONArray("buttons");
         for (int i = 0; i < buttons.length(); i++) {
             JSONObject b = buttons.getJSONObject(i);
-            String rcType = b.getString("rc_type");
-            String rcIRCode = b.getString("rc_ir_code");
-            dbHelper.insertButton(rcType, rcIRCode, id);
+            String prontoCode = b.getString("rc_ir_code");
+            String type = b.getString("rc_type");
+            dbHelper.insertButton(type, prontoCode, id);
         }
     }
 

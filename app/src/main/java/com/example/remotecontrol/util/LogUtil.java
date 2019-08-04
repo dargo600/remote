@@ -19,7 +19,7 @@ public class LogUtil {
 
     public static void logDebug(String tag, String msg) {
         if (logToTerminal) {
-            System.out.println("ERROR: " + tag + ": " + msg);
+            System.out.println("DEBUG: " + tag + ": " + msg);
         } else {
             Log.d(tag, msg);
         }

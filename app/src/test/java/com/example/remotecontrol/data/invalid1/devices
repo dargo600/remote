@@ -1,0 +1,36 @@
+[
+    "device_id": 1,
+    "device_type": "MediaDevice",
+    "manufacturer": "apple",
+    "model_num": "v2",
+    "timestamp": "2019-08-02T07:01:03.339212+00:00"
+  },
+  {
+    "device_config": [
+      {
+        "device_config_id": 4,
+        "device_id": 2,
+        "timestamp": "2019-08-02 07:01:03.462350"
+      }
+    ],
+    "device_id": 2,
+    "device_type": "MediaDevice",
+    "manufacturer": "roku",
+    "model_num": "streamstick",
+    "timestamp": "2019-08-02T07:01:03.420295+00:00"
+  },
+  {
+    "device_config": [
+      {
+        "device_config_id": 3,
+        "device_id": 3,
+        "timestamp": "2019-08-02 07:01:03.459299"
+      }
+    ],
+    "device_id": 3,
+    "device_type": "tv",
+    "manufacturer": "samsung",
+    "model_num": "ln46C630k1fkxzc",
+    "timestamp": "2019-08-02T07:01:03.426702+00:00"
+  }
+]

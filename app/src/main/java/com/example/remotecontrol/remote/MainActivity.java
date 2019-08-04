@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.remotecontrol.data.*;
 import com.example.remotecontrol.R;
@@ -16,6 +15,7 @@ import com.example.remotecontrol.util.LogUtil;
 public class MainActivity extends AppCompatActivity {
     private final String TAG = MainActivity.class.getSimpleName();
 
+    private GenericNotify notify;
     private RemoteMain remoteMain;
     private boolean downloadAttempted = false;
 
@@ -31,27 +31,27 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             downloadAttempted = savedInstanceState.getBoolean("downloadAttempted");
         }
-        ConsumerIrManager ir = (ConsumerIrManager)this.getSystemService(Context.CONSUMER_IR_SERVICE);
+        notify = new WidgetNotify(this);
+        ConsumerIrManager ir = (ConsumerIrManager) this.getSystemService(Context.CONSUMER_IR_SERVICE);
         IRHandler irHandler = new IRHandler(ir);
         if (irHandler.detectRemoteControl()) {
             processIRDetected(irHandler);
         } else {
-            Toast toast = Toast.makeText(this, "IR emitter unavailable",
-                    Toast.LENGTH_SHORT);
-            toast.show();
+            notify.displayMessage("IR emitter unavailable");
             setContentView(R.layout.activity_unsupported);
         }
     }
 
     private void processIRDetected(IRHandler irHandler) {
-        DBHelperImpl dbHelper = new DBHelperImpl(this);
+        DBConnector dbConnector = new DBConnector(this);
+        DBHelper dbHelper = new DBHelperImpl(dbConnector);
         initRemoteMain(irHandler, dbHelper);
         new GetRemoteConfiguration().execute();
         setContentView(R.layout.activity_main);
     }
 
     public void initRemoteMain(IRHandler irHandler, DBHelper dbHelper) {
-        remoteMain = new RemoteMain(irHandler, dbHelper);
+        remoteMain = new RemoteMain(irHandler, dbHelper, notify);
     }
 
     private class GetRemoteConfiguration extends AsyncTask<Void, Void, Boolean> {
@@ -76,29 +76,21 @@ public class MainActivity extends AppCompatActivity {
                 msg = errorMessage;
                 LogUtil.logError(TAG, msg);
             }
-            Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+            MainActivity.this.notify.displayMessage(msg);
         }
     }
 
     public void processTVButton(View view) {
         String cd = view.getContentDescription().toString();
-        String msg = remoteMain.processMediaId(cd, "tv");
-        if (msg.length() > 0)
-            displayError(msg);
+        remoteMain.processMediaId(cd, "tv");
     }
 
     public void processMediaButton(View view) {
-        try {
-            String cd = view.getContentDescription().toString();
-            String msg = remoteMain.processMediaId(cd, "media");
-            if (msg.length() > 0)
-                displayError(msg);
-        } catch (Exception e) {
-            displayError("Error: " + e.getMessage());
-        }
+        String cd = view.getContentDescription().toString();
+        remoteMain.processMediaId(cd, "media");
     }
 
-    private void displayError(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    public RemoteMain getRemoteMain() {
+        return remoteMain;
     }
 }

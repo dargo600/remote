@@ -8,6 +8,7 @@ import com.example.remotecontrol.util.*;
 public class ConfigLocal {
     private final String TAG = ConfigLocal.class.getSimpleName();
 
+    private ConfigManager configManager;
     private DBHelper dbHelper;
 
     private ArrayList<String> desiredConfigs;
@@ -23,7 +24,6 @@ public class ConfigLocal {
         boolean isEmpty;
         try {
             isEmpty = dbHelper.isDBEmpty();
-            LogUtil.logDebug(TAG, "FIXME " + isEmpty);
         } catch (Exception e) {
             throw new DBReadException("Error: " + e.getMessage());
         }
@@ -35,7 +35,11 @@ public class ConfigLocal {
     }
 
     public void addDefaultDesiredConfig() throws Exception {
-        dbHelper.addDefaultRequestedConfigs();
+        try {
+            dbHelper.addDefaultDesiredConfigs(configManager.getDefaultDesiredConfigs());
+        } catch (Exception e) {
+            throw new ParseConfigException("Failed to set Default Desired Config");
+        }
     }
 
     public void initFromLocal() throws ParseConfigException {
@@ -59,11 +63,15 @@ public class ConfigLocal {
         }
         dbHelper.closeDB();
         if (desiredConfigs.isEmpty()) {
-            throw new ParseConfigException("Desired configs are empty");
+            throw new ParseConfigException("Accessing Default Desired Configs Failed");
         }
     }
 
     public HashMap<String, DeviceConfiguration> getDeviceConfigs() {
         return requestedConfigs;
+    }
+
+    public void setConfigManager(ConfigManager cm) {
+        this.configManager = cm;
     }
 }

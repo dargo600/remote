@@ -36,21 +36,6 @@ public class URLHandler {
         return response;
     }
 
-    private InputStream makeInputStream(String reqUrl, URL url) throws Exception {
-        InputStream in;
-        if (reqUrl.startsWith("file:///")) {
-            URLConnection conn = url.openConnection();
-            in = new BufferedInputStream(conn.getInputStream());
-        } else {
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            in = new BufferedInputStream(conn.getInputStream());
-        }
-
-        return in;
-    }
-
-
     private String convertStreamToString(InputStream is) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         StringBuilder sb = new StringBuilder();

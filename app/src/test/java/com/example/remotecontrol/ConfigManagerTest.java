@@ -1,6 +1,8 @@
 package com.example.remotecontrol;
 
-import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,21 +13,12 @@ import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
 import com.example.remotecontrol.data.*;
-import com.example.remotecontrol.remote.MainActivity;
 import com.example.remotecontrol.util.*;
 
 import java.util.HashMap;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConfigManagerTest {
-
-    private final String TAG = MainActivity.class.getSimpleName();
-
-    private static final String FAKE_STRING = "HELLO WORLD";
-
-
-    @Mock
-    Context mockContext;
 
     @Mock
     ConfigRetriever mockRemote;
@@ -34,45 +27,38 @@ public class ConfigManagerTest {
     ConfigLocal mockLocal;
 
     @Mock
-    FakeDBHelper mockDB;
+    SQLiteDatabase mockDB;
 
-    /** @todo Fixme investigate issue further
+    @Mock
+    DBConnector mockConnect;
+
+    @Mock
+    Cursor mockCursor;
+
     @Test(expected=DBReadException.class)
-    public void isLocalEmpty_whenDBisNULL() throws Exception {
+    public void isLocalEmpty_whenDBisNULLThrowDBReadException() throws Exception {
         LogUtil.enableLogToTerminal();
-        String msg = "Failed to readDB";
-   //     when(mockDB.getReadableDB()).thenThrow(new DBReadException(msg));
-        ConfigLocal cl = new ConfigLocal(mockDB);
-        ConfigManager cm = new ConfigManager(mockContext, mockRemote, cl);
-            cm.isLocalEmpty();
-    }
-    @Test
-    public void initLocal_isLocalEmptysuccess() throws Exception {
-        LogUtil.enableLogToTerminal();
-        when(mockDB.isDBEmpty()).thenReturn(true);
-        ConfigLocal cl = new ConfigLocal(mockDB);
-        ConfigManager cm = new ConfigManager(mockRemote, cl);
-        cm.initLocal();
-    }
-**/
-
-    @Test
-    public void doProcessEmptyLocal_whenDBEmpty() throws Exception {
-        LogUtil.enableLogToTerminal();
-        when(mockDB.isDBEmpty()).thenReturn(true);
-        ConfigLocal cl = new ConfigLocal(new FakeDBHelper());
+        when(mockConnect.initRead()).thenThrow(SQLiteException.class);
+        DBHelper dbHelper = new DBHelperImpl(mockConnect);
+        ConfigLocal cl = new ConfigLocal(dbHelper);
         ConfigManager cm = new ConfigManager(mockRemote, cl);
         cm.initLocal();
     }
 
-    @Test
-    public void initFromLocal_noException() throws Exception {
+    @Test(expected=ParseConfigException.class)
+    public void isLocalEmpty_FailsToWriteDesiredConfig() throws Exception {
+        int countOfRequestedConfigsInDB = 0;
         LogUtil.enableLogToTerminal();
-        ConfigManager cm = new ConfigManager(mockRemote, mockLocal);
+        when(mockConnect.initRead()).thenReturn(mockDB);
+        when(mockDB.query("requested_configs", new String[] { "_id", "name"},
+                null, null,  null, null, null))
+                .thenReturn(mockCursor);
+        when(mockCursor.getCount()).thenReturn(countOfRequestedConfigsInDB);
+        DBHelper dbHelper = new DBHelperImpl(mockConnect);
+        ConfigLocal cl = new ConfigLocal(dbHelper);
+        ConfigManager cm = new ConfigManager(mockRemote, cl);
         cm.initLocal();
-        verify(mockLocal, times(1)).initFromLocal();
     }
-
     @Test
     public void getRequestedConfigs_canReturnEmptyList() {
         LogUtil.enableLogToTerminal();

@@ -8,46 +8,52 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static org.mockito.Mockito.*;
 
 import com.example.remotecontrol.data.*;
+import com.example.remotecontrol.util.FileURLStream;
 import com.example.remotecontrol.util.*;
+
+import java.util.ArrayList;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConfigRetrieverTest {
 
     @Mock
-    DBHelperImpl mockDB;
+    DBConnector mockDB;
+
 
     @Test(expected=ParseConfigException.class)
     public void syncToRemote_failedToDownloadDB() throws Exception {
         LogUtil.enableLogToTerminal();
         when(mockDB.getReadableDatabase()).thenReturn(null);
+        DBHelperImpl dbHelper = new DBHelperImpl(mockDB);
         FileURLStream stream = new FileURLStream();
-        ConfigRetriever remote = new ConfigRetriever(mockDB, "http://", stream);
+        ConfigRetriever remote = new ConfigRetriever(dbHelper, "http://", stream);
         remote.syncToRemote();
-    }
-
-    @Test
-    public void syncToRemote_success() throws Exception {
-        LogUtil.enableLogToTerminal();
-        when(mockDB.getReadableDatabase()).thenReturn(null);
-        String testDir = "/src/test/java/com/example/remotecontrol/data/";
-        String url = "file://" + System.getProperty("user.dir") + testDir;
-        FileURLStream stream = new FileURLStream();
-        ConfigRetriever remote = new ConfigRetriever(mockDB, url, stream);
-        remote.syncToRemote();
-        //verify(mockDB, atLeastOnce()).insertDeviceConfig(anyInt(), anyString());
-        //verify(mockDB, atLeastOnce()).insertButton(anyString(), anyString(), anyInt());
-        //verify(mockDB, atLeastOnce()).insertDevice(anyString(), anyString(), anyString(), anyInt());
-
     }
 
     @Test
     public void syncToRemote_emptyJsonFiles() throws Exception {
         LogUtil.enableLogToTerminal();
-        when(mockDB.getReadableDatabase()).thenReturn(null);
         String testDir = "/src/test/java/com/example/remotecontrol/data/empty_files/";
         String url = "file://" + System.getProperty("user.dir") + testDir;
+        DBHelperImpl dbHelper = new DBHelperImpl(mockDB);
         FileURLStream stream = new FileURLStream();
-        ConfigRetriever remote = new ConfigRetriever(mockDB, url, stream);
+        ConfigRetriever remote = new ConfigRetriever(dbHelper, url, stream);
+        remote.syncToRemote();
+    }
+
+    @Test(expected=ParseConfigException.class)
+    public void syncToRemote_newConfigAddedButNotHandled() throws Exception {
+        LogUtil.enableLogToTerminal();
+        String testDir = "/src/test/java/com/example/remotecontrol/data/";
+        String url = "file://" + System.getProperty("user.dir") + testDir;
+        DBHelperImpl dbHelper = new DBHelperImpl(mockDB);
+        FileURLStream stream = new FileURLStream();
+        ConfigRetriever remote = new ConfigRetriever(dbHelper, url, stream);
+        ArrayList<String> newConfigs = new ArrayList<>();
+        newConfigs.add("samsungConfig1");
+        newConfigs.add("appleConfig1");
+        newConfigs.add("newConfigAddedButNotHandled");
+        remote.setRSTConfigs(newConfigs);
         remote.syncToRemote();
     }
 }

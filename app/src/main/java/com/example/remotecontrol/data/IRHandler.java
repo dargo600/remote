@@ -1,9 +1,6 @@
 package com.example.remotecontrol.data;
 
 import android.hardware.ConsumerIrManager;
-
-import com.example.remotecontrol.util.LogUtil;
-
 import java.util.HashMap;
 
 public class IRHandler {

@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public interface DBHelper {
-    void initRead();
-    void initWrite();
+    void initRead() throws Exception;
+    void initWrite() throws Exception;
     boolean isDBEmpty() throws Exception;
-    void addDefaultRequestedConfigs();
+    void addDefaultDesiredConfigs(ArrayList<String> desiredConfigs) throws Exception;
     void insertRequestedConfig(String name);
     void insertDeviceConfig(int deviceConfigId, String name);
     void insertDevice(String deviceType, String manufacturer,

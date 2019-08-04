@@ -1,8 +1,6 @@
 package com.example.remotecontrol;
 
-import android.hardware.ConsumerIrManager;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.remotecontrol.data.DBHelper;
 import com.example.remotecontrol.data.IRHandler;
@@ -22,7 +20,7 @@ import static org.mockito.Mockito.*;
 public class MainActivityTest {
 
     @Mock
-    Toast mockToast;
+    GenericNotify mockNotify;
 
     @Mock
     IRHandler mockIR;
@@ -33,33 +31,29 @@ public class MainActivityTest {
     @Mock
     View mockView;
 
-    @Mock
-    RemoteMain mockRemote;
-
     @Test
-    public void processMediaButton_fails() {
+    public void processMediaButton_failsWithDisplayWhenButtonNotFound() {
         LogUtil.enableLogToTerminal();
         MainActivity main = new MainActivity();
+        main.initRemoteMain(mockIR, mockDB);
         when(mockView.getContentDescription())
-                .thenReturn("appleConfig1");
-        try {
-            main.processMediaButton(mockView);
-        } catch (Exception e) {
-            // fails on toast as expected but we can't easily mock toast
-        }
+                .thenReturn("up");
+        main.getRemoteMain().setNotify(mockNotify);
+        main.processMediaButton(mockView);
+        String msg = "Unrecognized media button up";
+        verify(mockNotify, times(1)).displayMessage(msg);
     }
 
     @Test
-    public void processTVButton_fails() {
+    public void processTVButton_failsWithDisplayWhenButtonNotFound() {
         LogUtil.enableLogToTerminal();
         MainActivity main = new MainActivity();
-        /** todo **/
-        try {
-            main.initRemoteMain(mockIR, mockDB);
-            when(mockView.getContentDescription())
-                    .thenReturn("samsungConfig1");
-            main.processTVButton(mockView);
-        } catch (Exception e) {
-        }
+        main.initRemoteMain(mockIR, mockDB);
+        when(mockView.getContentDescription())
+                .thenReturn("power");
+        main.getRemoteMain().setNotify(mockNotify);
+        main.processTVButton(mockView);
+        String msg = "Unrecognized tv button power";
+        verify(mockNotify, times(1)).displayMessage(msg);
     }
 }
