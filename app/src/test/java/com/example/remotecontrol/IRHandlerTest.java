@@ -29,16 +29,36 @@ public class IRHandlerTest {
     }
 
     @Test
-    public void processMediaId() {
-        //when(mockIRM.hasIrEmitter()).thenReturn(true);
+    public void processMediaId_success() {
+        HashMap<String, DeviceConfiguration> deviceConfigs = new HashMap<>();
+        DeviceConfiguration dc;
+        dc = new DeviceConfiguration(1, "appleConfig1", "media");
+        RCButton button = new RCButton("power", "0000 006C 0000 0000 0000 0000 0000 0000");
+        dc.addRCButton("power", button);
+        deviceConfigs.put("appleConfig1", dc);
         IRHandler irHandler = new IRHandler(mockIRM) ;
-        String id = "up";
-        String mediaType = "appleConfig1";
+        irHandler.updateDeviceConfigs(deviceConfigs);
+        String id = "power";
+        String mediaType = "media";
         irHandler.processMediaId(id, mediaType);
-        /**
-        int frequency = 0;
-        int[] pattern = new int[];
+
+        int frequency = 38380;
+        int[] pattern = { 0, 0, 0, 0};
         verify(mockIRM, times(1)).transmit(frequency, pattern);
-**/
+    }
+
+    @Test
+    public void processMediaId_ButtonNotInConfig() {
+        HashMap<String, DeviceConfiguration> deviceConfigs = new HashMap<>();
+        DeviceConfiguration dc;
+        dc = new DeviceConfiguration(1, "appleConfig1", "media");
+        RCButton button = new RCButton("power", "0000 006C 0000 0000 0000 0000 0000 0000");
+        dc.addRCButton("power", button);
+        deviceConfigs.put("appleConfig1", dc);
+        IRHandler irHandler = new IRHandler(mockIRM) ;
+        irHandler.updateDeviceConfigs(deviceConfigs);
+        String id = "up";
+        String mediaType = "media";
+        irHandler.processMediaId(id, mediaType);
     }
 }

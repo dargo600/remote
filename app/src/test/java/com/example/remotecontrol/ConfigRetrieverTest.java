@@ -8,6 +8,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static org.mockito.Mockito.*;
 
 import com.example.remotecontrol.data.*;
+import com.example.remotecontrol.data.streams.HTTPURLStream;
+import com.example.remotecontrol.data.streams.URLStream;
 import com.example.remotecontrol.util.FileURLStream;
 import com.example.remotecontrol.util.*;
 
@@ -25,7 +27,7 @@ public class ConfigRetrieverTest {
         LogUtil.enableLogToTerminal();
         when(mockDB.getReadableDatabase()).thenReturn(null);
         DBHelperImpl dbHelper = new DBHelperImpl(mockDB);
-        FileURLStream stream = new FileURLStream();
+        URLStream stream = new HTTPURLStream();
         ConfigRetriever remote = new ConfigRetriever(dbHelper, "http://", stream);
         remote.syncToRemote();
     }
@@ -50,9 +52,7 @@ public class ConfigRetrieverTest {
         FileURLStream stream = new FileURLStream();
         ConfigRetriever remote = new ConfigRetriever(dbHelper, url, stream);
         ArrayList<String> newConfigs = new ArrayList<>();
-        newConfigs.add("samsungConfig1");
-        newConfigs.add("appleConfig1");
-        newConfigs.add("newConfigAddedButNotHandled");
+        newConfigs.add("unhandled_new_file");
         remote.setRSTConfigs(newConfigs);
         remote.syncToRemote();
     }

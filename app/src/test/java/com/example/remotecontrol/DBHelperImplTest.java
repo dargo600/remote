@@ -3,7 +3,6 @@ package com.example.remotecontrol;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,9 +13,7 @@ import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
 import com.example.remotecontrol.data.*;
-import com.example.remotecontrol.util.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
 import java.util.HashMap;

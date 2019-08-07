@@ -43,8 +43,8 @@ public class ConfigRetriever {
             } else if (config.equals("devices")) {
                 rstHandler.parseDevices(jsonStr);
             } else {
-                throw new ParseConfigException("Unknown RST Configuration "
-                        + config);
+                throw new ParseConfigException("Unknown RST Configuration " +
+                        config);
             }
         }
     }
