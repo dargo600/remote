@@ -22,22 +22,9 @@ public class ConfigManager {
     }
 
     public void initLocal() throws Exception {
-        if (isLocalEmpty()) {
-            processEmptyLocal();
+        if (!localConfig.isConfigValid()) {
+            retriever.syncToRemote();
         }
-        initFromLocal();
-    }
-
-    private boolean isLocalEmpty() throws Exception {
-       return localConfig.isConfigEmpty();
-    }
-
-    private void processEmptyLocal() throws Exception {
-        localConfig.addDefaultDesiredConfig();
-        retriever.syncToRemote();
-    }
-
-    private void initFromLocal()  throws Exception {
         localConfig.initFromLocal();
         LogUtil.logDebug(TAG, "Finished Initialization");
     }

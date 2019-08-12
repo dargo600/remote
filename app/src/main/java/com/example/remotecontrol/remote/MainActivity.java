@@ -1,10 +1,10 @@
 package com.example.remotecontrol.remote;
 
+import android.app.Activity;
 import android.content.Context;
 import android.hardware.ConsumerIrManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.example.remotecontrol.data.*;
@@ -12,7 +12,7 @@ import com.example.remotecontrol.R;
 
 import com.example.remotecontrol.util.LogUtil;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
     private final String TAG = MainActivity.class.getSimpleName();
 
     private GenericNotify notify;
@@ -75,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
             if (!success) {
                 msg = errorMessage;
                 LogUtil.logError(TAG, msg);
+            } else {
+                LogUtil.logDebug(TAG, msg);
             }
             MainActivity.this.notify.displayMessage(msg);
         }

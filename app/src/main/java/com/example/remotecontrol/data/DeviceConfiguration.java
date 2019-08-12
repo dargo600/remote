@@ -1,6 +1,5 @@
 package com.example.remotecontrol.data;
 
-import com.example.remotecontrol.util.LogUtil;
 import com.example.remotecontrol.util.ParseConfigException;
 
 import java.util.ArrayList;
@@ -40,19 +39,17 @@ public class DeviceConfiguration {
         return configName;
     }
 
-    public void addRCButton(String buttonType, RCButton button)  {
+    public void addRCButton(String buttonType, RCButton button) throws Exception {
         if (rcButtons.containsKey(buttonType)) {
-            /** FIXME
+            // FIXME
             String msg = "Button exists for " + buttonType;
             throw new ParseConfigException(msg);
-             */
         }
         rcButtons.put(buttonType, button);
     }
 
 
     public void addDevice(int deviceConfigID) {
-
         supportedDevices.add(deviceConfigID);
     }
 

@@ -14,6 +14,7 @@ import static org.junit.Assert.*;
 
 import com.example.remotecontrol.data.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -50,19 +51,21 @@ public class DBHelperImplTest {
 
 
     @Test
-    public void insertRequestedConfig_success() throws Exception {
+    public void addDefaultDesiredConfig_success() throws Exception {
         String configName = "samsungConfig1";
+        ArrayList<String> al = new ArrayList<>();
+        al.add(configName);
         when(mockConnect.initWrite()).thenReturn(mockDB);
         when(mockConnect.makeContentValues())
                 .thenReturn(mockContentValues);
 
         DBHelperImpl dbHelper = new DBHelperImpl(mockConnect);
         dbHelper.initWrite();
-        dbHelper.insertRequestedConfig(configName);
+        dbHelper.addDefaultDesiredConfigs(al);
         verify(mockContentValues, times(1))
                 .put("name", configName);
         verify(mockDB, times(1))
-                .insert("requested_configs", null, mockContentValues);
+                .insert("desired_configs", null, mockContentValues);
     }
 
     @Test

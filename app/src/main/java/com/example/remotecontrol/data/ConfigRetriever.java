@@ -31,9 +31,9 @@ public class ConfigRetriever {
 
     public void
     syncToRemote() throws Exception {
-        LogUtil.logDebug(TAG, "Downloading Database from " + baseURL + " ...");
         for (String config : rstConfigs) {
             final String url = baseURL + config;
+            LogUtil.logDebug(TAG, "Downloading Database from " + url + " ...");
             String jsonStr = URLHandler.processURL(url);
             if (jsonStr == null || jsonStr.length() == 0) {
                 continue;

@@ -6,9 +6,11 @@ import java.util.HashMap;
 public interface DBHelper {
     void initRead() throws Exception;
     void initWrite() throws Exception;
-    boolean isDBEmpty() throws Exception;
+    ArrayList<String> getDesiredConfigs();
+    boolean initDesiredConfigs() throws Exception;
+    boolean isDeviceConfigsValid() throws Exception;
+    boolean isDevicesValid() throws Exception;
     void addDefaultDesiredConfigs(ArrayList<String> desiredConfigs) throws Exception;
-    void insertRequestedConfig(String name);
     void insertDeviceConfig(int deviceConfigId, String name);
     void insertDevice(String deviceType, String manufacturer,
                              String modelNum, int deviceConfigId);

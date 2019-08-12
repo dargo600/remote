@@ -13,7 +13,7 @@ public class DBConnector extends SQLiteOpenHelper {
     private static final int DB_VERSION = 1;
 
     private String[] tables = {
-            "requested_configs",
+            "desired_configs",
             "device_configs",
             "devices",
             "rc_buttons"
@@ -39,10 +39,10 @@ public class DBConnector extends SQLiteOpenHelper {
     }
 
     private void updateMyDatabase(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion < 1) {
+        //if (oldVersion < 1) {
             dropAllTables(db);
             createDefaultTables(db);
-        }
+       // }
     }
 
     private void dropAllTables(SQLiteDatabase db) {
@@ -53,15 +53,14 @@ public class DBConnector extends SQLiteOpenHelper {
     }
 
     private void createDefaultTables(SQLiteDatabase db) {
-        createRequestedConfigsTable(db);
+        createDesiredConfigsTable(db);
         createDevicesConfigsTable(db);
         createDevicesTable(db);
         createRCButtonsTable(db);
     }
 
-
-    private void createRequestedConfigsTable(SQLiteDatabase db) {
-        db.execSQL("create table requested_configs " +
+    private void createDesiredConfigsTable(SQLiteDatabase db) {
+        db.execSQL("create table desired_configs " +
                 "(_id integer primary key autoincrement, " +
                 "name text)");
     }

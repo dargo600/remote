@@ -29,7 +29,7 @@ public class DBConnectorTest {
         DBConnector testDB = new DBConnector(mainContext);
         testDB.onCreate(mockDB);
         verify(mockDB, times(1))
-                .execSQL("drop table if exists requested_configs;");
+                .execSQL("drop table if exists desired_configs;");
         verify(mockDB, times(1))
                 .execSQL("drop table if exists device_configs;");
         verify(mockDB, times(1))
@@ -37,7 +37,7 @@ public class DBConnectorTest {
         verify(mockDB, times(1))
                 .execSQL("drop table if exists rc_buttons;");
         verify(mockDB, times(1))
-                .execSQL("create table requested_configs "
+                .execSQL("create table desired_configs "
                         + "(_id integer primary key autoincrement, "
                         + "name text)");
         verify(mockDB, times(1))

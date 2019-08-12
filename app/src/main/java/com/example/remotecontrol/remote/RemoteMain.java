@@ -32,7 +32,7 @@ public class RemoteMain {
     }
 
     public String doBackgroundTask() {
-        String errorMessage = "Configuration processed.";
+        String errorMessage = "";
         try {
             configManager.initLocal();
             irHandler.updateDeviceConfigs(configManager.getRequestedConfigs());

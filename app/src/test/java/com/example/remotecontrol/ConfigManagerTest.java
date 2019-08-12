@@ -44,7 +44,7 @@ public class ConfigManagerTest {
         ConfigManager cm = new ConfigManager(mockRemote, cl);
         cm.initLocal();
     }
-
+/**
     @Test(expected=ParseConfigException.class)
     public void isLocalEmpty_FailsToWriteDesiredConfig() throws Exception {
         int countOfRequestedConfigsInDB = 0;
@@ -59,6 +59,8 @@ public class ConfigManagerTest {
         ConfigManager cm = new ConfigManager(mockRemote, cl);
         cm.initLocal();
     }
+ */
+
     @Test
     public void getRequestedConfigs_canReturnEmptyList() {
         LogUtil.enableLogToTerminal();

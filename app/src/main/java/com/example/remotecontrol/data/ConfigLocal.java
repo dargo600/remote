@@ -20,26 +20,24 @@ public class ConfigLocal {
         requestedConfigs = new HashMap<>();
     }
 
-    public boolean isConfigEmpty() throws DBReadException {
-        boolean isEmpty;
+    public boolean isConfigValid() throws DBReadException {
+        boolean valid;
         try {
-            isEmpty = dbHelper.isDBEmpty();
+            if (!dbHelper.initDesiredConfigs()) {
+                desiredConfigs = configManager.getDefaultDesiredConfigs();
+                dbHelper.addDefaultDesiredConfigs(desiredConfigs);
+            }
+            desiredConfigs = dbHelper.getDesiredConfigs();
+            valid = dbHelper.isDeviceConfigsValid();
+            dbHelper.isDevicesValid();
         } catch (Exception e) {
             throw new DBReadException("Error: " + e.getMessage());
         }
-        if (!isEmpty) {
+        if (valid) {
             LogUtil.logDebug(TAG, "Database Detected");
         }
 
-        return isEmpty;
-    }
-
-    public void addDefaultDesiredConfig() throws Exception {
-        try {
-            dbHelper.addDefaultDesiredConfigs(configManager.getDefaultDesiredConfigs());
-        } catch (Exception e) {
-            throw new ParseConfigException("Failed to set Default Desired Config");
-        }
+        return valid;
     }
 
     public void initFromLocal() throws ParseConfigException {
@@ -56,12 +54,14 @@ public class ConfigLocal {
 
     private void
     initDeviceConfigs() throws Exception {
+        int configsInitialized = 0;
         dbHelper.initRead();
-        desiredConfigs = dbHelper.initializeDesiredConfigs();
         for (String configName : desiredConfigs) {
             dbHelper.cacheConfig(configName);
+            configsInitialized++;
         }
         dbHelper.closeDB();
+        LogUtil.logDebug(TAG, "Initialized " + configsInitialized + " configs");
         if (desiredConfigs.isEmpty()) {
             throw new ParseConfigException("Accessing Default Desired Configs Failed");
         }

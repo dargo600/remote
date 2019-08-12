@@ -2,11 +2,15 @@ package com.example.remotecontrol.data;
 
 import android.database.sqlite.SQLiteException;
 
+import com.example.remotecontrol.util.LogUtil;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class RSTHandler {
+    private final String TAG = RSTHandler.class.getSimpleName();
+
     private DBHelper dbHelper;
 
     public RSTHandler(DBHelper dbHelper) {
@@ -16,12 +20,16 @@ public class RSTHandler {
     public void
     parseDeviceConfigurations(String jsonStr) throws Exception {
         JSONArray deviceConfigs = new JSONArray(jsonStr);
+        LogUtil.logDebug(TAG, "Parsing Device Configurations...");
+        int processedDeviceConfigs = 0;
         dbHelper.initWrite();
         for (int i = 0; i < deviceConfigs.length(); i++) {
             JSONObject dc = deviceConfigs.getJSONObject(i);
             parseDeviceConfig(dc);
+            processedDeviceConfigs++;
         }
         dbHelper.closeDB();
+        LogUtil.logDebug(TAG, "Processed " + processedDeviceConfigs + " configurations");
     }
 
     private void parseDeviceConfig(JSONObject dc) throws JSONException {
@@ -38,12 +46,14 @@ public class RSTHandler {
     }
 
     public void
-    parseDevices(String jsonStr) throws JSONException, SQLiteException {
+    parseDevices(String jsonStr) throws Exception {
+        dbHelper.initWrite();
         JSONArray devices = new JSONArray(jsonStr);
         for (int i = 0; i < devices.length(); i++) {
             JSONObject d = devices.getJSONObject(i);
             parseDevice(d);
         }
+        dbHelper.closeDB();
     }
 
     private void parseDevice(JSONObject d) throws JSONException {

@@ -33,27 +33,6 @@ public class RemoteMainTest {
     @Mock
     DBHelper mockDBHelper;
 
-    public RemoteMain setup_file_json_access(String requestedDirectory) throws Exception {
-        String testDir = "/src/test/java/com/example/remotecontrol/data/";
-        String newDir = testDir + requestedDirectory;
-        String url = "file://" + System.getProperty("user.dir") + newDir;
-
-        IRHandler irHandler = new IRHandler(mockIRM);
-        ArrayList<String> requestedConfigs = new ArrayList<String>();
-        requestedConfigs.add("samsungConfig1");
-        requestedConfigs.add("appleConfig1");
-        when(mockDBHelper.isDBEmpty()).thenReturn(true);
-        when(mockDBHelper.initializeDesiredConfigs()).thenReturn(requestedConfigs);
-        FileURLStream stream = new FileURLStream();
-        ConfigLocal local = new ConfigLocal(mockDBHelper);
-        ConfigRetriever remote = new ConfigRetriever(mockDBHelper, url, stream);
-        ConfigManager manager = new ConfigManager(remote, local);
-        RemoteMain main = new RemoteMain(irHandler, mockDBHelper, mockNotify);
-        main.setConfigManager(manager);
-
-        return main;
-    }
-
     @Test
     public void doBackgroundTask_successNoFetch() throws Exception  {
         LogUtil.enableLogToTerminal();
@@ -64,8 +43,9 @@ public class RemoteMainTest {
         DeviceConfiguration dc;
         dc = new DeviceConfiguration(1, "samsungConfig1", "tv");
         deviceConfigs.put("samsungConfig1", dc);
-        when(mockDBHelper.isDBEmpty()).thenReturn(false);
-        when(mockDBHelper.initializeDesiredConfigs()).thenReturn(requestedConfigs);
+        when(mockDBHelper.isDeviceConfigsValid()).thenReturn(true);
+        when(mockDBHelper.isDevicesValid()).thenReturn(true);
+        when(mockDBHelper.getDesiredConfigs()).thenReturn(requestedConfigs);
         when(mockDBHelper.getRequestedConfigs()).thenReturn(deviceConfigs);
         String testDir = "/src/test/java/com/example/remotecontrol/";
         String invalidDir = testDir + "data/";
@@ -76,7 +56,7 @@ public class RemoteMainTest {
         ConfigManager manager = new ConfigManager(remote, local);
         RemoteMain main = new RemoteMain(mockIR, mockDBHelper, mockNotify);
         main.setConfigManager(manager);
-        String expectedStr = "Configuration processed.";
+        String expectedStr = "";
         assertEquals(expectedStr, main.doBackgroundTask());
     }
 
@@ -92,7 +72,7 @@ public class RemoteMainTest {
         deviceConfigs.put("samsungConfig1", dc);
         when(mockDBHelper.getRequestedConfigs()).thenReturn(deviceConfigs);
 
-        String expectedStr = "Configuration processed.";
+        String expectedStr = "";
         assertEquals(expectedStr, main.doBackgroundTask());
     }
 
@@ -102,6 +82,8 @@ public class RemoteMainTest {
         String newDir = "invalid1/";
 
         RemoteMain main = setup_file_json_access(newDir);
+        when(mockDBHelper.isDeviceConfigsValid()).thenReturn(false);
+        when(mockDBHelper.isDevicesValid()).thenReturn(false);
         main.doBackgroundTask();
         String expectedStr = "Error: A JSONArray text must start with"
                 + " '[' at 1 [character 2 line 1]";
@@ -129,4 +111,28 @@ public class RemoteMainTest {
         String expectedStr = "Error: Failed to ParseDB Could not get requested Configs";
         assertEquals(expectedStr, main.doBackgroundTask());
     }
+
+    /** helpers */
+    public RemoteMain setup_file_json_access(String requestedDirectory) throws Exception {
+        String testDir = "/src/test/java/com/example/remotecontrol/data/";
+        String newDir = testDir + requestedDirectory;
+        String url = "file://" + System.getProperty("user.dir") + newDir;
+
+        IRHandler irHandler = new IRHandler(mockIRM);
+        ArrayList<String> desiredConfigs = new ArrayList<String>();
+        desiredConfigs.add("samsungConfig1");
+        desiredConfigs.add("appleConfig1");
+        when(mockDBHelper.isDeviceConfigsValid()).thenReturn(false);
+        when(mockDBHelper.isDevicesValid()).thenReturn(false);
+        when(mockDBHelper.getDesiredConfigs()).thenReturn(desiredConfigs);
+        FileURLStream stream = new FileURLStream();
+        ConfigLocal local = new ConfigLocal(mockDBHelper);
+        ConfigRetriever remote = new ConfigRetriever(mockDBHelper, url, stream);
+        ConfigManager manager = new ConfigManager(remote, local);
+        RemoteMain main = new RemoteMain(irHandler, mockDBHelper, mockNotify);
+        main.setConfigManager(manager);
+
+        return main;
+    }
+
 }
