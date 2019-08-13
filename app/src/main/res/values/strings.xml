@@ -13,4 +13,12 @@
     <string name="extpl">extpl</string>
     <string name="menu">menu</string>
     <string name="play">play</string>
+    <string name="roku_tv">Roku</string>
+    <string name="ok">OK</string>
+    <string name="back">Back</string>
+    <string name="home">Home</string>
+    <string name="asterisk">*</string>
+    <string name="rewind">REW</string>
+    <string name="ffw">FFW</string>
+    <string name="netflix">Netflix</string>
 </resources>

@@ -29,7 +29,7 @@ public class IRHandlerTest {
     }
 
     @Test
-    public void processMediaId_success() {
+    public void processMediaId_success() throws Exception {
         HashMap<String, DeviceConfiguration> deviceConfigs = new HashMap<>();
         DeviceConfiguration dc;
         dc = new DeviceConfiguration(1, "appleConfig1", "media");
@@ -39,8 +39,8 @@ public class IRHandlerTest {
         IRHandler irHandler = new IRHandler(mockIRM) ;
         irHandler.updateDeviceConfigs(deviceConfigs);
         String id = "power";
-        String mediaType = "media";
-        irHandler.processMediaId(id, mediaType);
+        String configName = "appleConfig1";
+        irHandler.processMediaId(id, configName);
 
         int frequency = 38380;
         int[] pattern = { 0, 0, 0, 0};
@@ -48,7 +48,7 @@ public class IRHandlerTest {
     }
 
     @Test
-    public void processMediaId_ButtonNotInConfig() {
+    public void processMediaId_ButtonNotInConfig() throws Exception {
         HashMap<String, DeviceConfiguration> deviceConfigs = new HashMap<>();
         DeviceConfiguration dc;
         dc = new DeviceConfiguration(1, "appleConfig1", "media");

@@ -10,7 +10,7 @@ import com.example.remotecontrol.util.ParseConfigException;
 public class DBConnector extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "remote";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
 
     private String[] tables = {
             "desired_configs",
@@ -39,10 +39,10 @@ public class DBConnector extends SQLiteOpenHelper {
     }
 
     private void updateMyDatabase(SQLiteDatabase db, int oldVersion, int newVersion) {
-        //if (oldVersion < 1) {
+        if (oldVersion < 2) {
             dropAllTables(db);
             createDefaultTables(db);
-       // }
+        }
     }
 
     private void dropAllTables(SQLiteDatabase db) {

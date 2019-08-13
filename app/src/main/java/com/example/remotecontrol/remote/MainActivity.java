@@ -6,6 +6,10 @@ import android.hardware.ConsumerIrManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.GridLayout;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.example.remotecontrol.data.*;
 import com.example.remotecontrol.R;
@@ -82,14 +86,10 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void processTVButton(View view) {
-        String cd = view.getContentDescription().toString();
-        remoteMain.processMediaId(cd, "tv");
-    }
-
     public void processMediaButton(View view) {
-        String cd = view.getContentDescription().toString();
-        remoteMain.processMediaId(cd, "media");
+        GridLayout r = (GridLayout) (view.getParent());
+        String configValue = r.getContentDescription().toString();
+        remoteMain.processMediaId(view.getContentDescription().toString(), configValue);
     }
 
     public RemoteMain getRemoteMain() {

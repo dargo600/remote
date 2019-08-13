@@ -30,10 +30,17 @@
         "rc_type": "down"
       }
     ],
-    "device": 1,
     "device_config_id": 1,
     "device_config_name": "appleConfig1",
-    "timestamp": "2019-08-02T07:01:03.436478+00:00"
+    "devices": [
+      {
+        "device_id": 1,
+        "device_type": "MediaDevice",
+        "manufacturer": "apple",
+        "model_num": "v2"
+      }
+    ],
+    "timestamp": "2019-08-12T20:13:00.740085+00:00"
   },
   {
     "buttons": [
@@ -54,10 +61,10 @@
         "rc_type": "power"
       }
     ],
-    "device": null,
     "device_config_id": 2,
     "device_config_name": "samsungConfig2",
-    "timestamp": "2019-08-02T07:01:03.455255+00:00"
+    "devices": [],
+    "timestamp": "2019-08-12T20:13:00.751260+00:00"
   },
   {
     "buttons": [
@@ -198,10 +205,17 @@
         "rc_type": "0"
       }
     ],
-    "device": 3,
     "device_config_id": 3,
     "device_config_name": "samsungConfig1",
-    "timestamp": "2019-08-02T07:01:03.459299+00:00"
+    "devices": [
+      {
+        "device_id": 2,
+        "device_type": "tv",
+        "manufacturer": "samsung",
+        "model_num": "ln46C630k1fkxzc"
+      }
+    ],
+    "timestamp": "2019-08-12T20:13:00.751910+00:00"
   },
   {
     "buttons": [
@@ -262,9 +276,16 @@
         "rc_type": "asterisk"
       }
     ],
-    "device": 2,
     "device_config_id": 4,
     "device_config_name": "rokuConfig1",
-    "timestamp": "2019-08-02T07:01:03.462350+00:00"
+    "devices": [
+      {
+        "device_id": 3,
+        "device_type": "MediaDevice",
+        "manufacturer": "roku",
+        "model_num": "streamstick"
+      }
+    ],
+    "timestamp": "2019-08-12T20:13:00.752502+00:00"
   }
 ]

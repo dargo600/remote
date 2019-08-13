@@ -19,6 +19,7 @@ public class ConfigManager {
         defaultDesiredConfigs = new ArrayList<String>();
         defaultDesiredConfigs.add("samsungConfig1");
         defaultDesiredConfigs.add("appleConfig1");
+        defaultDesiredConfigs.add("rokuConfig1");
     }
 
     public void initLocal() throws Exception {

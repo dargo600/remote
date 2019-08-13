@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,94 +8,140 @@
     android:paddingTop="16dp"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-    android:columnCount="8"
     android:background="@android:color/black"
     tools:context=".remote.MainActivity">
 
     <TextView
+        android:id="@+id/tvTextView"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:layout_gravity="fill_horizontal"
         android:text="@string/tv"
-        android:textColor="@android:color/white"
-        android:layout_row="0"
-        android:layout_columnSpan="3" />
+        android:textColor="@android:color/white" />
+
+    <GridLayout
+        android:id="@+id/tvMainLayout"
+        android:contentDescription="samsungConfig1"
+        android:layout_below="@id/tvTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
 
     <Button
         android:id="@+id/tv_power"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_row="1"
+        android:layout_row="0"
         android:layout_column="0"
-        android:layout_columnSpan="2"
         android:background="@drawable/button"
         android:contentDescription="@string/power"
-        android:minWidth="40dp"
-        android:onClick="processTVButton"
+        android:onClick="processMediaButton"
         android:text="Power"
         android:textColor="@color/button_text" />
 
     <Button
         android:id="@+id/tv_source"
+        android:layout_row="0"
+        android:layout_column="1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_row="1"
-        android:layout_column="4"
-        android:layout_alignParentRight="true"
         android:background="@drawable/button"
         android:contentDescription="@string/source"
-        android:minWidth="40dp"
-        android:onClick="processTVButton"
+        android:onClick="processMediaButton"
         android:text="SRC"
         android:textColor="@color/button_text" />
 
-
     <Button
-        android:id="@+id/tv_volume_dec"
+        android:id="@+id/tv_voldown"
         android:contentDescription="@string/volume_down"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_row="2"
-        android:layout_column="0"
+        android:layout_row="0"
+        android:layout_column="2"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:background="@drawable/ic_volume_down_white_24dp"
-        android:onClick="processTVButton" />
+        android:onClick="processMediaButton" />
 
     <Button
-        android:id="@+id/tv_volume_inc"
+        android:id="@+id/tv_volup"
         android:contentDescription="@string/volume_up"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_row="2"
-        android:layout_column="1"
+        android:layout_row="0"
+        android:layout_column="3"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:background="@drawable/ic_volume_up_white_24dp"
-        android:onClick="processTVButton" />
+        android:onClick="processMediaButton" />
+    </GridLayout>
 
     <TextView
+        android:id="@+id/appleTVTextView"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:layout_gravity="fill_horizontal"
-        android:layout_row="3"
-        android:layout_column="0"
+        android:layout_below="@id/tvMainLayout"
         android:text="@string/apple_tv"
-        android:textColor="@android:color/white"
-        android:layout_columnSpan="3" />
+        android:textColor="@android:color/white" />
+
+    <GridLayout
+        android:id="@+id/appleTVLayout"
+        android:columnCount="5"
+        android:contentDescription="appleConfig1"
+        android:layout_below="@id/appleTVTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
 
     <Button
-        android:id="@+id/up"
+        android:id="@+id/appleUp"
         android:contentDescription="@string/up"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_row="4"
+        android:layout_row="0"
         android:layout_column="1"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:onClick="processMediaButton"
         android:background="@drawable/ic_keyboard_arrow_up_white_24dp" />
 
     <Button
-        android:id="@+id/menu"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_row="4"
-        android:layout_column="4"
+        android:id="@+id/appleLeft"
+        android:contentDescription="@string/left"
+        android:layout_row="1"
+        android:layout_column="0"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="@drawable/ic_keyboard_arrow_left_white_24dp"
+        android:onClick="processMediaButton" />
+
+    <Button
+        android:id="@+id/select"
+        android:layout_row="1"
+        android:layout_column="1"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="@drawable/ic_lens_white_24dp"
+        android:contentDescription="@string/play"
+        android:onClick="processMediaButton" />
+
+    <Button
+        android:id="@+id/right"
+        android:contentDescription="@string/right"
+        android:layout_row="1"
+        android:layout_column="2"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="@drawable/ic_keyboard_arrow_right_white_24dp"
+        android:onClick="processMediaButton" />
+
+    <Button
+        android:id="@+id/down"
+        android:contentDescription="@string/down"
+        android:layout_row="2"
+        android:layout_column="1"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="@drawable/ic_keyboard_arrow_down_white_24dp"
+        android:onClick="processMediaButton" />
+
+    <Button
+        android:id="@+id/appleTvMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_row="0"
+        android:layout_column="3"
         android:layout_gravity="center_vertical"
         android:background="@drawable/button"
         android:contentDescription="menu"
@@ -105,52 +151,168 @@
 
     <Button
         android:id="@+id/play"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_row="5"
+        android:layout_row="0"
         android:layout_column="4"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:contentDescription="@string/play"
+        android:onClick="processMediaButton"
+        android:background="@drawable/ic_play_arrow_24dp" />
+    </GridLayout>
+
+    <TextView
+        android:id="@+id/rokuTextView"
+        android:layout_below="@id/appleTVLayout"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="@string/roku_tv"
+        android:textColor="@android:color/white" />
+
+    <GridLayout
+        android:id="@+id/rokuTVLayout"
+        android:contentDescription="rokuConfig1"
+        android:columnCount="6"
+        android:layout_below="@id/rokuTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+    <Button
+        android:id="@+id/rokuUp"
+        android:contentDescription="@string/up"
+        android:layout_row="0"
+        android:layout_column="1"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:onClick="processMediaButton"
+        android:background="@drawable/ic_keyboard_arrow_up_white_24dp" />
+
+    <Button
+        android:id="@+id/roku_left"
+        android:contentDescription="@string/left"
+        android:layout_row="1"
+        android:layout_column="0"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="@drawable/ic_keyboard_arrow_left_white_24dp"
+        android:onClick="processMediaButton" />
+
+    <Button
+        android:id="@+id/roku_ok"
+        android:layout_row="1"
+        android:layout_column="1"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="@drawable/ic_lens_white_24dp"
+        android:contentDescription="@string/ok"
+        android:onClick="processMediaButton" />
+
+    <Button
+        android:id="@+id/roku_right"
+        android:contentDescription="@string/right"
+        android:layout_row="1"
+        android:layout_column="2"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="@drawable/ic_keyboard_arrow_right_white_24dp"
+        android:onClick="processMediaButton" />
+
+    <Button
+        android:id="@+id/roku_down"
+        android:contentDescription="@string/down"
+        android:layout_row="2"
+        android:layout_column="1"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="@drawable/ic_keyboard_arrow_down_white_24dp"
+        android:onClick="processMediaButton" />
+
+    <Button
+        android:id="@+id/roku_asterisk"
+        android:layout_row="0"
+        android:layout_column="3"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/button"
+        android:contentDescription="asterisk"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:onClick="processMediaButton"
+        android:text="@string/asterisk"
+        android:textColor="@color/button_text" />
+
+
+    <Button
+        android:id="@+id/roku_back"
+        android:layout_row="0"
+        android:layout_column="4"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/button"
+        android:contentDescription="back"
+        android:layout_width="48dp"
+        android:layout_height="36dp"
+        android:onClick="processMediaButton"
+        android:text="@string/back"
+        android:textColor="@color/button_text" />
+
+    <Button
+        android:id="@+id/roku_home"
+        android:layout_row="0"
+        android:layout_column="5"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/button"
+        android:contentDescription="home"
+        android:layout_width="48dp"
+        android:layout_height="36dp"
+        android:onClick="processMediaButton"
+        android:text="@string/home"
+        android:textColor="@color/button_text" />
+
+    <Button
+        android:id="@+id/roku_rew"
+        android:layout_row="1"
+        android:layout_column="3"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:contentDescription="rew"
+        android:background="@drawable/button"
+        android:text="@string/rewind"
+        android:textColor="@color/button_text"
+        android:onClick="processMediaButton" />
+
+    <Button
+        android:id="@+id/roku_play"
+        android:layout_row="1"
+        android:layout_column="4"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:contentDescription="@string/play"
         android:onClick="processMediaButton"
         android:background="@drawable/ic_play_arrow_24dp" />
 
     <Button
-        android:id="@+id/left"
-        android:contentDescription="@string/left"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_row="5"
-        android:layout_column="0"
-        android:background="@drawable/ic_keyboard_arrow_left_white_24dp"
+        android:id="@+id/roku_ffw"
+        android:layout_row="1"
+        android:layout_column="5"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="ffw"
+        android:background="@drawable/button"
+        android:text="@string/ffw"
+        android:textColor="@color/button_text"
         android:onClick="processMediaButton" />
 
     <Button
-        android:id="@+id/select"
-        android:contentDescription="@string/play"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_row="5"
-        android:layout_column="1"
-        android:background="@drawable/ic_lens_white_24dp"
+        android:id="@+id/roku_netflix"
+        android:layout_row="2"
+        android:layout_column="3"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/button"
+        android:contentDescription="netflix"
+        android:text="@string/netflix"
+        android:textColor="@color/button_text"
         android:onClick="processMediaButton" />
 
-    <Button
-        android:id="@+id/right"
-        android:contentDescription="@string/right"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_row="5"
-        android:layout_column="2"
-        android:background="@drawable/ic_keyboard_arrow_right_white_24dp"
-        android:onClick="processMediaButton" />
-
-    <Button
-        android:id="@+id/down"
-        android:contentDescription="@string/down"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_row="6"
-        android:layout_column="1"
-        android:background="@drawable/ic_keyboard_arrow_down_white_24dp"
-        android:onClick="processMediaButton" />
-
-</GridLayout>
+    </GridLayout>
+</RelativeLayout>

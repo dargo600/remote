@@ -1,6 +1,7 @@
 package com.example.remotecontrol;
 
 import android.view.View;
+import android.widget.GridLayout;
 
 import com.example.remotecontrol.data.DBHelper;
 import com.example.remotecontrol.data.IRHandler;
@@ -31,29 +32,23 @@ public class MainActivityTest {
     @Mock
     View mockView;
 
+    @Mock
+    GridLayout mockGridLayout;
+
     @Test
     public void processMediaButton_failsWithDisplayWhenButtonNotFound() {
         LogUtil.enableLogToTerminal();
         MainActivity main = new MainActivity();
         main.initRemoteMain(mockIR, mockDB);
+        when(mockView.getParent())
+            .thenReturn(mockGridLayout);
+        when(mockGridLayout.getContentDescription())
+                .thenReturn("samsungConfig1");
         when(mockView.getContentDescription())
                 .thenReturn("up");
         main.getRemoteMain().setNotify(mockNotify);
         main.processMediaButton(mockView);
-        String msg = "Unrecognized media button up";
-        verify(mockNotify, times(1)).displayMessage(msg);
-    }
-
-    @Test
-    public void processTVButton_failsWithDisplayWhenButtonNotFound() {
-        LogUtil.enableLogToTerminal();
-        MainActivity main = new MainActivity();
-        main.initRemoteMain(mockIR, mockDB);
-        when(mockView.getContentDescription())
-                .thenReturn("power");
-        main.getRemoteMain().setNotify(mockNotify);
-        main.processTVButton(mockView);
-        String msg = "Unrecognized tv button power";
+        String msg = "Unrecognized button up";
         verify(mockNotify, times(1)).displayMessage(msg);
     }
 }

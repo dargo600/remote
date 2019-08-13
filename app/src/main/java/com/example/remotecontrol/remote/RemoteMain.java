@@ -2,6 +2,7 @@ package com.example.remotecontrol.remote;
 
 import com.example.remotecontrol.data.*;
 import com.example.remotecontrol.data.streams.*;
+import com.example.remotecontrol.util.LogUtil;
 
 public class RemoteMain {
 
@@ -43,9 +44,9 @@ public class RemoteMain {
         return errorMessage;
     }
 
-    public void processMediaId(String cd, String media) {
-        if (!irHandler.processMediaId(cd, media)) {
-            String error = "Unrecognized " + media + " button " + cd;
+    public void processMediaId(String buttonName, String configValue) {
+        if (!irHandler.processMediaId(buttonName, configValue)) {
+            String error = "Unrecognized button " + buttonName;
             notify.displayMessage(error);
         }
     }

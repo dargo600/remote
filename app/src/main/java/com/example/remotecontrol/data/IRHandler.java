@@ -32,17 +32,12 @@ public class IRHandler {
         this.deviceConfigs = deviceConfigs;
     }
 
-    public boolean processMediaId(String id, String mediaType) {
-        String desiredConfig = desiredConfigs.get(mediaType);
-        if (deviceConfigs != null && desiredConfig.length() > 0) {
-            DeviceConfiguration device = deviceConfigs.get(desiredConfig);
-            if (device == null) {
-                return false;
-            }
+    public boolean processMediaId(String id, String configName) {
+        DeviceConfiguration device = deviceConfigs.get(configName);
+        if (device != null) {
             RCButton button = device.getRCButton(id);
             if (button != null) {
                 sendIRCode(button);
-
                 return true;
             }
         }

@@ -13,8 +13,6 @@ import com.example.remotecontrol.data.streams.URLStream;
 import com.example.remotecontrol.util.FileURLStream;
 import com.example.remotecontrol.util.*;
 
-import java.util.ArrayList;
-
 @RunWith(MockitoJUnitRunner.class)
 public class ConfigRetrieverTest {
 
@@ -40,20 +38,6 @@ public class ConfigRetrieverTest {
         DBHelperImpl dbHelper = new DBHelperImpl(mockDB);
         FileURLStream stream = new FileURLStream();
         ConfigRetriever remote = new ConfigRetriever(dbHelper, url, stream);
-        remote.syncToRemote();
-    }
-
-    @Test(expected=ParseConfigException.class)
-    public void syncToRemote_newConfigAddedButNotHandled() throws Exception {
-        LogUtil.enableLogToTerminal();
-        String testDir = "/src/test/java/com/example/remotecontrol/data/";
-        String url = "file://" + System.getProperty("user.dir") + testDir;
-        DBHelperImpl dbHelper = new DBHelperImpl(mockDB);
-        FileURLStream stream = new FileURLStream();
-        ConfigRetriever remote = new ConfigRetriever(dbHelper, url, stream);
-        ArrayList<String> newConfigs = new ArrayList<>();
-        newConfigs.add("unhandled_new_file");
-        remote.setRSTConfigs(newConfigs);
         remote.syncToRemote();
     }
 }

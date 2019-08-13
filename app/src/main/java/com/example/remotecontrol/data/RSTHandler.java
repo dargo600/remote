@@ -43,26 +43,14 @@ public class RSTHandler {
             String type = b.getString("rc_type");
             dbHelper.insertButton(type, prontoCode, id);
         }
-    }
-
-    public void
-    parseDevices(String jsonStr) throws Exception {
-        dbHelper.initWrite();
-        JSONArray devices = new JSONArray(jsonStr);
+        JSONArray devices = dc.getJSONArray("devices");
         for (int i = 0; i < devices.length(); i++) {
             JSONObject d = devices.getJSONObject(i);
-            parseDevice(d);
+            parseDevice(d, id);
         }
-        dbHelper.closeDB();
     }
 
-    private void parseDevice(JSONObject d) throws JSONException {
-        JSONArray deviceConfigs = d.getJSONArray("device_config");
-        int deviceConfigId = 0;
-        for (int i = 0; i < deviceConfigs.length(); i++) {
-            JSONObject dc = deviceConfigs.getJSONObject(i);
-            deviceConfigId = dc.getInt("device_config_id");
-        }
+    private void parseDevice(JSONObject d, int deviceConfigId) throws JSONException {
         String dt = d.getString("device_type");
         String man = d.getString("manufacturer");
         String modelNum = d.getString("model_num");
