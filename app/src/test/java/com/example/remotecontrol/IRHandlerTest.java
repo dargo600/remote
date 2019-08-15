@@ -32,7 +32,7 @@ public class IRHandlerTest {
     public void processMediaId_success() throws Exception {
         HashMap<String, DeviceConfiguration> deviceConfigs = new HashMap<>();
         DeviceConfiguration dc;
-        dc = new DeviceConfiguration(1, "appleConfig1", "media");
+        dc = new DeviceConfiguration(1, "appleConfig1");
         RCButton button = new RCButton("power", "0000 006C 0000 0000 0000 0000 0000 0000");
         dc.addRCButton("power", button);
         deviceConfigs.put("appleConfig1", dc);
@@ -51,7 +51,7 @@ public class IRHandlerTest {
     public void processMediaId_ButtonNotInConfig() throws Exception {
         HashMap<String, DeviceConfiguration> deviceConfigs = new HashMap<>();
         DeviceConfiguration dc;
-        dc = new DeviceConfiguration(1, "appleConfig1", "media");
+        dc = new DeviceConfiguration(1, "appleConfig1");
         RCButton button = new RCButton("power", "0000 006C 0000 0000 0000 0000 0000 0000");
         dc.addRCButton("power", button);
         deviceConfigs.put("appleConfig1", dc);

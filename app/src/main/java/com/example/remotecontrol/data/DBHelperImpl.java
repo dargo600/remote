@@ -2,10 +2,8 @@ package com.example.remotecontrol.data;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.util.Log;
 
 import com.example.remotecontrol.util.*;
 
@@ -232,16 +230,14 @@ public class DBHelperImpl implements DBHelper {
     }
 
     public void cacheConfig(String configName) throws Exception {
-        String query = "SELECT dc.device_config_id, d.device_type FROM " +
-                "device_configs AS dc, devices AS d WHERE " +
-                "d.device_config_id==dc.device_config_id AND dc.name = ?";
+        String query = "SELECT device_config_id FROM device_configs WHERE " +
+                "name = ?";
         Cursor cursor = db.rawQuery(query, new String[]{configName});
         cursor.moveToFirst();
         if (!cursor.isAfterLast()) {
             int deviceConfigId = cursor.getInt(0);
-            String deviceType = cursor.getString(1);
             DeviceConfiguration dc = new DeviceConfiguration(deviceConfigId,
-                    configName, deviceType);
+                    configName);
             addButtonsToConfig(dc);
             requestedConfigs.put(configName, dc);
             LogUtil.logDebug(TAG, "Added " + configName + " as a device configuration");

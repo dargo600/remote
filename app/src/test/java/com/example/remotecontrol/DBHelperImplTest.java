@@ -13,6 +13,7 @@ import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
 import com.example.remotecontrol.data.*;
+import com.example.remotecontrol.util.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -135,12 +136,12 @@ public class DBHelperImplTest {
 
     @Test
     public void cacheConfig_success() throws Exception {
+        LogUtil.enableLogToTerminal();
         String configName = "samsungConfig1";
         int deviceConfigId = 1;
         when(mockConnect.initWrite()).thenReturn(mockDB);
-        String deviceConfigQuery = "SELECT dc.device_config_id, d.device_type FROM " +
-                "device_configs AS dc, devices AS d WHERE " +
-                "d.device_config_id==dc.device_config_id AND dc.name = ?";
+        String deviceConfigQuery = "SELECT device_config_id FROM " +
+                "device_configs WHERE name = ?";
         when(mockDB.rawQuery(deviceConfigQuery, new String[] { configName}))
                 .thenReturn(mockCursor);
         when(mockCursor.moveToFirst()).thenReturn(true);

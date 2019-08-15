@@ -48,7 +48,7 @@ public class RemoteMainTest {
         requestedConfigs.add("appleConfig1");
         HashMap<String, DeviceConfiguration> deviceConfigs = new HashMap<>();
         DeviceConfiguration dc;
-        dc = new DeviceConfiguration(1, "samsungConfig1", "tv");
+        dc = new DeviceConfiguration(1, "samsungConfig1");
         deviceConfigs.put("samsungConfig1", dc);
         when(mockDBHelper.isDeviceConfigsValid()).thenReturn(true);
         when(mockDBHelper.isDevicesValid()).thenReturn(true);
@@ -77,7 +77,7 @@ public class RemoteMainTest {
         RemoteMain main = setup_file_json_access(newDir);
         HashMap<String, DeviceConfiguration> deviceConfigs = new HashMap<>();
         DeviceConfiguration dc;
-        dc = new DeviceConfiguration(1, "samsungConfig1", "tv");
+        dc = new DeviceConfiguration(1, "samsungConfig1");
         deviceConfigs.put("samsungConfig1", dc);
         when(mockDBHelper.getRequestedConfigs()).thenReturn(deviceConfigs);
         when(mockSSDP.getAddresses()).thenReturn(addresses);
