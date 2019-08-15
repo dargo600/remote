@@ -1,6 +1,9 @@
 package com.example.remotecontrol.data;
 
 import android.hardware.ConsumerIrManager;
+
+import com.example.remotecontrol.util.LogUtil;
+
 import java.util.HashMap;
 
 public class IRHandler {
@@ -9,22 +12,13 @@ public class IRHandler {
 
     private ConsumerIrManager irManager;
     private HashMap<String, DeviceConfiguration> deviceConfigs;
-    private HashMap<String, String> desiredConfigs;
 
     public IRHandler(ConsumerIrManager irManager) {
         this.irManager = irManager;
-        desiredConfigs = new HashMap<>();
-        desiredConfigs.put("tv", "samsungConfig1");
-        desiredConfigs.put("media", "appleConfig1");
     }
 
     public boolean detectRemoteControl() {
         return irManager.hasIrEmitter();
-    }
-
-    public void
-    updateDesiredConfigs(HashMap<String, String> configs) {
-        desiredConfigs = configs;
     }
 
     public void
@@ -33,14 +27,20 @@ public class IRHandler {
     }
 
     public boolean processMediaId(String id, String configName) {
-        DeviceConfiguration device = deviceConfigs.get(configName);
-        if (device != null) {
-            RCButton button = device.getRCButton(id);
-            if (button != null) {
-                sendIRCode(button);
-                return true;
+        DeviceConfiguration device = null;
+        RCButton button = null;
+        if (deviceConfigs != null) {
+            device = deviceConfigs.get(configName);
+            if (device != null) {
+                button = device.getRCButton(id);
+                if (button != null) {
+                    sendIRCode(button);
+                    return true;
+                }
             }
         }
+        LogUtil.logDebug(TAG, "Failed to send IR code for " + configName +
+                " device " + device + " button " + button);
 
         return false;
     }
@@ -53,6 +53,8 @@ public class IRHandler {
     private void sendIRCode(final RCButton button) {
         int[] irPattern = button.getIrPattern();
         int frequency = button.getFrequency();
+        LogUtil.logDebug(TAG, "Sending IRButton for " + button.getButtonType()
+                + " frequency " + frequency);
         irManager.transmit(frequency, irPattern);
     }
 }

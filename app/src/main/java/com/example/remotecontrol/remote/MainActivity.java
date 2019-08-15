@@ -3,14 +3,14 @@ package com.example.remotecontrol.remote;
 import android.app.Activity;
 import android.content.Context;
 import android.hardware.ConsumerIrManager;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.GridLayout;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
+import com.example.remotecontrol.SSDPHandler;
 import com.example.remotecontrol.data.*;
 import com.example.remotecontrol.R;
 
@@ -49,16 +49,18 @@ public class MainActivity extends Activity {
     private void processIRDetected(IRHandler irHandler) {
         DBConnector dbConnector = new DBConnector(this);
         DBHelper dbHelper = new DBHelperImpl(dbConnector);
-        initRemoteMain(irHandler, dbHelper);
-        new GetRemoteConfiguration().execute();
+        WifiManager wifi = (WifiManager)this.getSystemService(Context.WIFI_SERVICE);
+        SSDPHandler ssdp = new SSDPHandler(wifi);
+        initRemoteMain(irHandler, dbHelper, ssdp);
+        new AsyncTaskRunner().execute();
         setContentView(R.layout.activity_main);
     }
 
-    public void initRemoteMain(IRHandler irHandler, DBHelper dbHelper) {
-        remoteMain = new RemoteMain(irHandler, dbHelper, notify);
+    public void initRemoteMain(IRHandler irHandler, DBHelper dbHelper, SSDPHandler ssdp) {
+        remoteMain = new RemoteMain(irHandler, dbHelper, notify, ssdp);
     }
 
-    private class GetRemoteConfiguration extends AsyncTask<Void, Void, Boolean> {
+    private class AsyncTaskRunner extends AsyncTask<Void, Void, Boolean> {
         private String errorMessage;
 
         @Override
@@ -89,7 +91,12 @@ public class MainActivity extends Activity {
     public void processMediaButton(View view) {
         GridLayout r = (GridLayout) (view.getParent());
         String configValue = r.getContentDescription().toString();
-        remoteMain.processMediaId(view.getContentDescription().toString(), configValue);
+        String curButton = view.getContentDescription().toString();
+        if (configValue.contains("SSDP")) {
+            remoteMain.processSSDPMediaId(curButton);
+        } else {
+            remoteMain.processIRMediaId(curButton, configValue);
+        }
     }
 
     public RemoteMain getRemoteMain() {

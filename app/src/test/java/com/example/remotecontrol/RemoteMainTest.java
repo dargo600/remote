@@ -1,6 +1,7 @@
 package com.example.remotecontrol;
 
 import android.hardware.ConsumerIrManager;
+import android.net.wifi.WifiManager;
 
 import com.example.remotecontrol.data.*;
 import com.example.remotecontrol.util.*;
@@ -13,6 +14,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
@@ -20,12 +22,17 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RemoteMainTest {
+    @Mock
+    SSDPHandler mockSSDP;
 
     @Mock
     IRHandler mockIR;
 
     @Mock
     ConsumerIrManager mockIRM;
+
+    @Mock
+    WifiManager mockWifi;
 
     @Mock
     GenericNotify mockNotify;
@@ -54,7 +61,7 @@ public class RemoteMainTest {
         ConfigLocal local = new ConfigLocal(mockDBHelper);
         ConfigRetriever remote = new ConfigRetriever(mockDBHelper, url, stream);
         ConfigManager manager = new ConfigManager(remote, local);
-        RemoteMain main = new RemoteMain(mockIR, mockDBHelper, mockNotify);
+        RemoteMain main = new RemoteMain(mockIR, mockDBHelper, mockNotify, mockSSDP);
         main.setConfigManager(manager);
         String expectedStr = "";
         assertEquals(expectedStr, main.doBackgroundTask());
@@ -65,13 +72,15 @@ public class RemoteMainTest {
         LogUtil.enableLogToTerminal();
         String newDir = "";
 
+        HashSet<String> addresses = new HashSet<String>();
+        addresses.add("172.168.1.68");
         RemoteMain main = setup_file_json_access(newDir);
         HashMap<String, DeviceConfiguration> deviceConfigs = new HashMap<>();
         DeviceConfiguration dc;
         dc = new DeviceConfiguration(1, "samsungConfig1", "tv");
         deviceConfigs.put("samsungConfig1", dc);
         when(mockDBHelper.getRequestedConfigs()).thenReturn(deviceConfigs);
-
+        when(mockSSDP.getAddresses()).thenReturn(addresses);
         String expectedStr = "";
         assertEquals(expectedStr, main.doBackgroundTask());
     }
@@ -129,7 +138,7 @@ public class RemoteMainTest {
         ConfigLocal local = new ConfigLocal(mockDBHelper);
         ConfigRetriever remote = new ConfigRetriever(mockDBHelper, url, stream);
         ConfigManager manager = new ConfigManager(remote, local);
-        RemoteMain main = new RemoteMain(irHandler, mockDBHelper, mockNotify);
+        RemoteMain main = new RemoteMain(irHandler, mockDBHelper, mockNotify, mockSSDP);
         main.setConfigManager(manager);
 
         return main;

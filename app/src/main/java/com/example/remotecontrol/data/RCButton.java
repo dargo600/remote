@@ -31,6 +31,10 @@ public class RCButton {
         frequency = (int) (1000000 / (freq * 0.241246));
     }
 
+    public String getButtonType() {
+        return buttonType;
+    }
+
     public int[] getIrPattern() {
 
         return irPattern;

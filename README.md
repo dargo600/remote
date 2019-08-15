@@ -7,10 +7,14 @@ tested.  It then creates a group of objects with the configurations that are in 
  to avoid the need to have to consult the database other than at start up.
 
 ### Todo: ###
- - add support for other devices such as Roku
  - improve the display menu.  Provide a configuration Activity 
  - add espresso/junit tests
  - investigate doing this in swift for iphone
+
+### SSDP
+Roku Streamsticks after 2016 use SSDP Simple Service Device Protocol instead of IR, which is basically acting
+as a REST API.  More information about how to use the ECP port here:
+https://developer.roku.com/en-ca/docs/developer-program/discovery/external-control-api.md
 
 ### Pronto Hex Format ###
 According to http://www.hifi-remote.com/infrared/IR-PWM.shtml, one can extract
