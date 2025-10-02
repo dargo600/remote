@@ -66,3 +66,9 @@ In Unit Test Source,
 data
 
 Where the Pronto codes can be found for testing purposes
+
+#### Design Notes
+
+In order for this code to work it does need a Samsung S6 with an IREmitter.  Phones after this date no longer have this emitter so this code would not be able to send pronto codes on them.
+
+Code starts entering remote/MainActivity.java in onCreate.  It creates a notify Object and a IRHandler class in order to determine if the current device this app is running on hasIrEmitter() if it does not it exits early.  If an IREmitter is detected it will create the Database Connection, initialize the dbHelper and star the AsyncTaskRunner which triggers doBackgroundTask periodically in the RemoteMain class.  This was also using ECP to communicate to Roku devices using post calls though my Roku is apparently missing so this is currently hard to test out.
